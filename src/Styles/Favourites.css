@@ -1,0 +1,111 @@
+.favourites-container {
+    padding: 60px 40px;
+    background-color: #f2f4f8;
+    min-height: 100vh;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  }
+  
+  .favourites-title {
+    font-size: 32px;
+    font-weight: 600;
+    margin-bottom: 40px;
+    text-align: center;
+    color: #333;
+  }
+  
+  .empty-text {
+    text-align: center;
+    font-size: 18px;
+    color: #777;
+  }
+  
+  .favourites-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 30px;
+  }
+  
+  .favourite-card {
+    background-color: #fff;
+    border-radius: 16px;
+    padding: 20px;
+    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.08);
+    text-align: center;
+    transition: all 0.3s ease;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+  }
+  
+  .favourite-card:hover {
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.12);
+    transform: translateY(-4px);
+  }
+  
+  .favourite-img {
+    width: 100%;
+    height: 200px;
+    object-fit: contain;
+    margin-bottom: 16px;
+    border-radius: 12px;
+  }
+  
+  .product-title {
+    font-size: 18px;
+    font-weight: 500;
+    color: #222;
+    margin-bottom: 20px;
+    min-height: 48px;
+  }
+  
+  .favourite-actions {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+  
+  .compare-btn,
+  .remove-btn {
+    padding: 10px 16px;
+    border-radius: 10px;
+    font-size: 15px;
+    border: none;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    font-weight: 500;
+    transition: background-color 0.3s ease;
+  }
+  
+  .compare-btn {
+    background-color: #007bff;
+    color: white;
+    text-decoration: none;
+  }
+  
+  .compare-btn:hover {
+    background-color: #0056b3;
+  }
+  
+  .remove-btn {
+    background-color: #f44336;
+    color: white;
+  }
+  
+  .remove-btn:hover {
+    background-color: #c62828;
+  }
+  
+  .success-message {
+    background-color: #d4edda;
+    color: #155724;
+    padding: 10px 15px;
+    border-radius: 5px;
+    border: 1px solid #c3e6cb;
+    margin-bottom: 15px;
+    text-align: center;
+    font-weight: 500;
+  }
+  

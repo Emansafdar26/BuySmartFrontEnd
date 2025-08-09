@@ -1,0 +1,124 @@
+.update-profile-container {
+    width: 400px;
+    padding: 30px;
+    border-radius: 12px;
+    background-color: #1B1F3B;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+    border: 1px solid #ddd;
+    text-align: center;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+  }
+  
+  .update-profile-container h2 {
+    margin-bottom: 25px;
+    font-size: 24px;
+    color: #ffffff;
+    font-weight: 700;
+  }
+  
+  .profile-info {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    width: 100%;
+  }
+  
+  .profile-field {
+    position: relative;
+    width: 100%;
+    text-align: left;
+  }
+  
+  .profile-field label {
+    display: block;
+    font-size: 16px;
+    font-weight: 600;
+    color: #ffffff;
+    margin-bottom: 5px;
+  }
+  
+  .profile-field span {
+    font-size: 16px;
+    color: #e0e0e0;
+    display: inline-block;
+    padding: 10px 12px;
+    background: #2C2F48;
+    border-radius: 6px;
+    width: 95%;
+    
+  }
+  
+  .profile-field input {
+    width: 95%;
+    padding: 10px 12px;
+    font-size: 16px;
+    border-radius: 6px;
+    border: 1px solid #ced4da;
+    background: #ffffff;
+    outline: none;
+    transition: 0.3s;
+  }
+  
+  .profile-field input:focus {
+    border-color: #007bff;
+    box-shadow: 0 0 5px rgba(0, 123, 255, 0.3);
+  }
+  
+  .edit-btn {
+    position: absolute;
+    top: 33px;
+    right: 12px;
+    background: none;
+    border: none;
+    color: #007bff;
+    font-size: 18px;
+    cursor: pointer;
+    transition: color 0.3s ease;
+  }
+  
+  .edit-btn:hover {
+    color: #0056b3;
+  }
+  
+  .update-btn {
+    margin-top: 20px;
+    padding: 12px;
+    width: 100%;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.3s;
+  }
+  
+  .update-btn:hover {
+    background-color: #0056b3;
+  }
+  
+  .error-text {
+    color: #ff4d4d;
+    font-size: 13px;
+    margin-top: 5px;
+    padding-top: 10px;
+  }
+  
+  .success-text {
+    color: #28a745;
+    font-size: 14px;
+    font-weight: bold;
+    margin-top: 15px;
+    text-align: center;
+  }
+  
+  @media (max-width: 450px) {
+    .update-profile-container {
+      width: 90%;
+      padding: 20px;
+    }
+  }
