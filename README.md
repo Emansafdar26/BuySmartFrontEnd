@@ -1,1 +1,2 @@
 # BuySmartFrontEnd
+Developed in React
