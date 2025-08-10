@@ -19,7 +19,7 @@ const ProductCard = ({ product }) => {
         <h3 className="products-name">{product.name}</h3>
 
         <p className="products-price">
-          {product.price ? `Rs ${product.price}` : "Price Not Available"}
+          {product.price ? `Rs ${Number(product.price).toLocaleString()}` : "Price Not Available"}
        </p>
 
         <Link to={`/product/${product.id}`} className="compare-btn" aria-label={`Compare prices for ${product.name}`}>

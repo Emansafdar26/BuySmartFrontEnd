@@ -1,6 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import '../Styles/ProductDetail.css';
-import { LineChart, Line, XAxis, YAxis, Tooltip, ResponsiveContainer, Legend } from 'recharts';
+import {
+  LineChart, Line, XAxis, YAxis, Tooltip, ResponsiveContainer, Legend, CartesianGrid
+} from 'recharts';
+import { apiGet } from "../lib/apiwrapper";
+import { useParams } from 'react-router-dom';
 import { FaFilter } from 'react-icons/fa';
 import darazLogo from '../Assets/daraz.webp';
 import ebayLogo from '../Assets/ebay.png';
@@ -15,15 +19,9 @@ const platforms = [
   { name: 'HomeShopping', logo: homeShoppingLogo, price: 50500, url: 'https://homeshopping.pk/', image: '' },
 ];
 
-const priceHistory = [
-  { date: 'Jan', price: 53000 },
-  { date: 'Feb', price: 51000 },
-  { date: 'Mar', price: 50000 },
-  { date: 'Apr', price: 49000 },
-  { date: 'May', price: 49999 },
-];
-
 const ProductDetail = () => {
+  const  { id }  = useParams(); // Get id from URL params
+
   const [filteredPlatforms, setFilteredPlatforms] = useState(platforms);
   const [isFavourite, setIsFavourite] = useState(false);
   const [priceAlert, setPriceAlert] = useState(null);
@@ -33,9 +31,44 @@ const ProductDetail = () => {
   const [showModal, setShowModal] = useState(false);
   const [showAlertModal, setShowAlertModal] = useState(false);
   const [alertInput, setAlertInput] = useState('');
+  const [priceHistory, setPriceHistory] = useState([]);
+  const [loadingHistory, setLoadingHistory] = useState(true);
+  const [error, setError] = useState(null);
 
   const productImage = platforms.find(p => p.image)?.image || 'https://via.placeholder.com/250x150?text=No+Image';
 
+  // Fetch price history from API when id changes
+  useEffect(() => {
+    if (!id) {
+      setLoadingHistory(false);
+      setPriceHistory([]);
+      return;
+    }
+     apiGet(`/products/${id}/price-history`)
+      .then((res) => {
+        if (res.detail && res.detail.code === 1) {
+          setPriceHistory(res.detail.data);
+        } else {
+          setPriceHistory([]);
+          setError(res.detail?.error || "Failed to fetch price history");
+        }
+      })
+      .catch((err) => {
+        setPriceHistory([]);
+        setError("Error fetching price history");
+        console.error(err);
+      })
+      .finally(() => {
+        setLoadingHistory(false);
+      });
+
+    setLoadingHistory(true);
+    setError(null);
+
+
+  }, [id]);
+
+  // Sorting logic
   useEffect(() => {
     const sorted = [...platforms];
     switch (sortOption) {
@@ -71,9 +104,9 @@ const ProductDetail = () => {
     const price = parseInt(alertInput);
     if (!isNaN(price)) {
       setPriceAlert(price);
-      setModalContent(`📢 Price alert set at Rs ${price.toLocaleString()}`);
+      setModalContent(`Price alert set at Rs ${price.toLocaleString()}`);
     } else {
-      setModalContent('❌ Invalid price entered!');
+      setModalContent('Invalid price entered!');
     }
     setShowAlertModal(false);
     setShowModal(true);
@@ -136,15 +169,24 @@ const ProductDetail = () => {
         <div className="chart-section">
           <h3 className="chart-title">Price History</h3>
           <div className="price-chart">
-            <ResponsiveContainer width="100%" height={250}>
-              <LineChart data={priceHistory}>
-                <XAxis dataKey="date" />
-                <YAxis />
-                <Tooltip />
-                <Legend />
-                <Line type="monotone" dataKey="price" stroke="#8884d8" strokeWidth={2} />
-              </LineChart>
-            </ResponsiveContainer>
+            {loadingHistory ? (
+              <p>Loading price history...</p>
+            ) : error ? (
+              <p style={{ color: 'red' }}>{error}</p>
+            ) : priceHistory.length === 0 ? (
+              <p>No price history available.</p>
+            ) : (
+              <ResponsiveContainer width="100%" height={250}>
+                <LineChart data={priceHistory}>
+                  <CartesianGrid strokeDasharray="3 3" />
+                  <XAxis dataKey="date" />
+                  <YAxis />
+                  <Tooltip />
+                  <Legend />
+                  <Line type="monotone" dataKey="price" stroke="#8884d8" strokeWidth={2} />
+                </LineChart>
+              </ResponsiveContainer>
+            )}
           </div>
         </div>
       </main>
@@ -189,3 +231,4 @@ const ProductDetail = () => {
 };
 
 export default ProductDetail;
+ 
