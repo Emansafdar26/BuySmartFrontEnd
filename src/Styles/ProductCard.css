@@ -8,35 +8,39 @@
   text-align: center;
   cursor: pointer;
   border: 4px solid #ddd;
-  width: 280px;
-  height: 380px;
+  width: 220px;
+ 
+  }
+  .product-image {
+    max-width: 100%;
+    height: 170px
   }
   
   .product-card:hover {
     transform: scale(1.05);
-    box-shadow: 0 10px 20px #1b1f3bb6;
+    box-shadow: 0 10px 20pxrgba(122, 132, 204, 0.71);
   }
   
-  .product-image {
+  .products-image {
     width: 100%;
-    height: 45%;
+    height: 180px;
     object-fit: contain;
     border-bottom: 1px solid #eee;
   }
   
   .products-info {
     padding: 10px 0;
-    height: 177px;
     align-content: center;
     margin-left: -20px;
-    margin-top: 10px;
+ 
   }
   
   .products-name {
     font-size: 16px;
     font-weight: bold;
     color: #333;
-    margin: 5px 0;
+   padding-top: -40px;
+   height: 35px;
   }
   
   .products-price {
@@ -45,32 +49,29 @@
     font-weight: bold;
   }
   
-  .platform-logos {
-    display: flex;
-    justify-content: center;
-    gap: 8px;
-    margin: 10px 0;
-  }
-  
-  .platform-logo {
-    width: 28px;
-    height: 28px;
-    object-fit: contain;
-  }
-  
-  .compare-btn {
+  .compare-button {
     background-color: #007bff;
     color: white;
-    padding: 8px 12px;
-    border-radius: 6px;
     text-decoration: none;
     font-size: 0.9rem;
     font-weight: bold;
     display: inline-block;
     margin-top: 10px;
-    margin-left: 16px;
+    padding-left: 10px;
+     padding: 10px 16px;
+    border-radius: 10px;
+    font-size: 15px;
+    border: none;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    font-weight: 500;
+    transition: background-color 0.3s ease;
+    margin-left: 18px;
   }
   
-  .compare-btn:hover {
+  .compare-button:hover {
     background-color: #0056b3;
   }

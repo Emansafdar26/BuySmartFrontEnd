@@ -9,12 +9,11 @@ import { apiGet, apiPost } from '../lib/apiwrapper';
 import React, { useState, useEffect } from "react";
 
 const Products = () => {
-  const [ searchQuery, setSearchQuery ] = useState('')
+  const { searchQuery } = useSearch()
   const [errors, setErrors] = useState({});
   const [allProducts, setProducts] = useState([]);
 
-  const searchResults = (e) => {
-    if (e.key === 'Enter' && e.keyCode === 13) {
+  const searchResults = () => {
       apiPost('/products/search', { name: searchQuery })      .then((res) => {
         if (res.detail) {
           if (res.detail.code === 1 && res.detail.data) {
@@ -36,7 +35,10 @@ const Products = () => {
         newErrors.products = "Something went wrong while fetching products."
         setErrors(newErrors)
       })
-      console.log('getting searched results')
+  }
+    const handleSearch = (route) => {
+    if (route === '/Products') {
+      searchResults()
     }
   }
   const getProducts = () => {
@@ -71,22 +73,10 @@ const Products = () => {
 
   return (
     <>
-      <Header />
+      <Header onSearch={handleSearch} />
       <Navbar />
       <main className="product-container">
-      <div className="searchBox">
-        <div className="search-container">
-          <BsSearch className="search-icon" />
-          <input
-            type="text"
-            className="search-bar"
-            placeholder="Search..."
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-            onKeyUp={(e) => searchResults(e)}
-          />
-        </div>
-      </div>
+
     
         <div className="product-header">
           <h2>All Products</h2>

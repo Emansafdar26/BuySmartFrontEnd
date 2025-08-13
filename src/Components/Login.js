@@ -48,10 +48,10 @@ const Login = () => {
                   localStorage.setItem('user', JSON.stringify(userData));
   
                   // Role-based navigation
-                  if (userData.role === 'Admin') {
-                    navigate('/admin/dashboard'); // Navigate to admin dashboard
+                  if (res.detail.role === 'SuperAdmin' || res.detail.role === 'Admin') {
+                    navigate('/admin/dashboard'); 
                   } else {
-                    navigate('/'); // Navigate to home for normal users
+                    navigate('/'); 
                   }
   
                 } else {

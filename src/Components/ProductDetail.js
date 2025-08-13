@@ -12,6 +12,7 @@ import homeShoppingLogo from '../Assets/HomeShopping.jpeg';
 import MainHeader from './MainHeader';
 import Navbar from './Navbar';
 import Footer from './Footer';
+import dayjs from "dayjs";
 
 const platforms = [
   { name: 'Daraz', logo: darazLogo, price: 49999, url: 'https://www.daraz.pk/', image: 'https://static-01.daraz.pk/p/abc123.jpg' },
@@ -20,7 +21,7 @@ const platforms = [
 ];
 
 const ProductDetail = () => {
-  const  { id }  = useParams(); // Get id from URL params
+  const  { id }  = useParams(); 
 
   const [filteredPlatforms, setFilteredPlatforms] = useState(platforms);
   const [isFavourite, setIsFavourite] = useState(false);
@@ -37,17 +38,25 @@ const ProductDetail = () => {
 
   const productImage = platforms.find(p => p.image)?.image || 'https://via.placeholder.com/250x150?text=No+Image';
 
-  // Fetch price history from API when id changes
   useEffect(() => {
     if (!id) {
       setLoadingHistory(false);
       setPriceHistory([]);
       return;
     }
-     apiGet(`/products/${id}/price-history`)
+
+    setLoadingHistory(true);
+    setError(null);
+
+    apiGet(`/products/${id}/price-history`)
       .then((res) => {
         if (res.detail && res.detail.code === 1) {
-          setPriceHistory(res.detail.data);
+          const formattedData = res.detail.data.map(item => ({
+            // Convert to "Aug 1" etc.
+            date: dayjs(item.date).format("MMM"),
+            price: item.price
+          }));
+          setPriceHistory(formattedData);
         } else {
           setPriceHistory([]);
           setError(res.detail?.error || "Failed to fetch price history");
@@ -61,12 +70,8 @@ const ProductDetail = () => {
       .finally(() => {
         setLoadingHistory(false);
       });
-
-    setLoadingHistory(true);
-    setError(null);
-
-
   }, [id]);
+
 
   // Sorting logic
   useEffect(() => {

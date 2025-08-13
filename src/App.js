@@ -79,7 +79,7 @@ function App() {
     
           {/* Private Routes */}
           <Route
-            path="/Profile"
+            path="/profile"
             element={
               <PrivateRoute>
                 <Profile />
@@ -87,7 +87,7 @@ function App() {
             }
           />
           <Route
-            path="/favourites"
+            path="/favourites/:search?"
             element={
               <PrivateRoute>
                 <Favourites />

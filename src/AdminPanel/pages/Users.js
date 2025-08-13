@@ -16,19 +16,24 @@ function Users() {
   const [errors, setErrors] = useState({});
   const [modalType, setModalType] = useState("");
 
+  // Get logged-in role
+  const [loggedUser, setLoggedUser] = useState({})
+
   useEffect(() => {
+    if (localStorage.getItem('user')) {
+      console.log(localStorage.getItem('user  '))
+      setLoggedUser(JSON.parse(localStorage.getItem('user')))
+    }
     fetchUsers();
   }, []);
 
   useEffect(() => {
-    const normalizedSearchQuery = searchQuery ? searchQuery.toLowerCase() : "";
-
+    const normalizedSearchQuery = searchQuery?.toLowerCase() || "";
     const result = users.filter(
       (user) =>
         user.username?.toLowerCase().includes(normalizedSearchQuery) &&
         (filterRole ? user.role === filterRole : true)
     );
-
     setFilteredUsers(result);
   }, [searchQuery, filterRole, users]);
 
@@ -79,7 +84,7 @@ function Users() {
       const newAdmin = {
         username: adminForm.username,
         email: adminForm.email,
-        role: "Admin"
+        role: "Admin",
       };
 
       try {
@@ -104,9 +109,6 @@ function Users() {
     if (!adminForm.email.match(/^[^\s@]+@[^\s@]+\.[^\s@]+$/)) {
       errors.email = "Invalid email format";
     } else {
-      if (!adminForm.email.startsWith(adminForm.email[0].toLowerCase()) && !adminForm.email.startsWith(adminForm.email[0].toUpperCase())) {
-        errors.email = "Email must start with an alphabet";
-      }
       if (!/^[a-zA-Z]/.test(adminForm.email)) {
         errors.email = "Email must start with an alphabet";
       }
@@ -114,8 +116,6 @@ function Users() {
         errors.email = "Only '.com' email addresses are allowed";
       }
     }
-  
-
     setFormErrors(errors);
     return Object.keys(errors).length === 0;
   };
@@ -126,19 +126,24 @@ function Users() {
       <div className="users-container">
         <h2 className="users-title">Users</h2>
 
-<div className="user-actions">
-<button className="add-admin-btn" onClick={() => openModal("add")}>
-    Add Admin
-  </button>
-  <div className="user-filter-container">
-    <select onChange={(e) => setFilterRole(e.target.value)} value={filterRole}>
-      <option value="">All Roles</option>
-      <option value="Admin">Admin</option>
-      <option value="User">User</option>
-    </select>
-  </div>
+        <div className="user-actions">
+          {/* Add Admin button — Super Admin only */}
+          {loggedUser && loggedUser.role === "SuperAdmin" ?
+            <button className="add-admin-btn" onClick={() => openModal("add")}>
+              Add Admin
+            </button>
+          : ''}
 
-</div>
+          <div className="user-filter-container">
+            <select onChange={(e) => setFilterRole(e.target.value)} value={filterRole}>
+              <option value="">All Roles</option>
+              <option value="SuperAdmin">Super Admin</option>
+              <option value="Admin">Admin</option>
+              <option value="User">User</option>
+            </select>
+          </div>
+        </div>
+
         <div className="users-table-container">
           <table className="users-table">
             <thead>
@@ -147,7 +152,7 @@ function Users() {
                 <th>Username</th>
                 <th>Email</th>
                 <th>Role</th>
-                <th>Actions</th>
+                {loggedUser && loggedUser.role === "SuperAdmin" ? <th>Actions</th> : ''}
               </tr>
             </thead>
             <tbody>
@@ -158,19 +163,22 @@ function Users() {
                     <td>{user.username}</td>
                     <td>{user.email}</td>
                     <td>{user.role}</td>
-                    <td>
-                      <button
-                        onClick={() => openModal("delete", user)}
-                        className="remove-user-btn"
-                      >
-                        Remove
-                      </button>
-                    </td>
+                      <td>
+                        {loggedUser && loggedUser.role === "SuperAdmin"?
+                          <button
+                            onClick={() => openModal("delete", user)}
+                            className="remove-user-btn"
+                          >
+                            Remove
+                          </button>
+                        : ''}
+                      </td>
+                
                   </tr>
                 ))
               ) : (
                 <tr>
-                  <td colSpan="5" className="no-results">
+                  <td colSpan={loggedUser && loggedUser.role === "SuperAdmin" ? "5" : "4"} className="no-results">
                     No Users Found
                   </td>
                 </tr>
@@ -180,13 +188,14 @@ function Users() {
         </div>
       </div>
 
-      {/* Modals */}
+      {/* Delete Modal */}
       {modalOpen && modalType === "delete" && (
         <div className="modal-overlay">
           <div className="modal-box">
             <h3>Confirm Deletion</h3>
             <p>
-              Are you sure you want to permanently remove {selectedUser?.username}? This action cannot be undone.
+              Are you sure you want to permanently remove {selectedUser?.username}? This action
+              cannot be undone.
             </p>
             <div className="modal-actions">
               <button onClick={handleDeleteUser} className="modal-confirm-btn">
@@ -200,6 +209,7 @@ function Users() {
         </div>
       )}
 
+      {/* Add Admin Modal */}
       {modalOpen && modalType === "add" && (
         <div className="modal-overlay">
           <div className="modal-box">

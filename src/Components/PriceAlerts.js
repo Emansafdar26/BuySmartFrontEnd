@@ -1,83 +1,236 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import '../Styles/PriceAlerts.css';
 import RemoveConfirmationModal from './RemoveConfirmationModal';
-import { FaBell, FaRegTrashAlt } from 'react-icons/fa';
+import { BsBellFill, BsFillCheckCircleFill } from 'react-icons/bs';
+import { useSearch } from "../AdminPanel/context/SearchContext";
 import MainHeader from './MainHeader';
+import Navbar from './Navbar';
 import Footer from './Footer';
-
-const dummyAlerts = [
-  {
-    id: 1,
-    title: 'Samsung Galaxy S21',
-    image: 'https://images.samsung.com/is/image/samsung/p6pim/levant/galaxy-s21/gallery/levant-galaxy-s21-5g-g991-sm-g991bzvdmea-368327191?$1300_1038_PNG$',
-    targetPrice: 100000,
-    platforms: ['Daraz', 'eBay'],
-  },
-  {
-    id: 2,
-    title: 'iPhone 14 Pro Max',
-    image: 'https://store.storeimages.cdn-apple.com/4982/as-images.apple.com/is/iphone-14-pro-model-unselect-gallery-2-202209?wid=5120&hei=2880&fmt=jpeg&qlt=90&.v=1660753619946',
-    targetPrice: 180000,
-    platforms: ['HomeShopping'],
-  },
-];
+import { Link } from 'react-router-dom';
+import { apiGet, apiPost } from '../lib/apiwrapper'; // your helper to call backend APIs
 
 const PriceAlerts = () => {
-  const [alerts, setAlerts] = useState(dummyAlerts);
-  const [showModal, setShowModal] = useState(false);
+  const { searchQuery } = useSearch();
+  const [alerts, setAlerts] = useState([]);
+  
+  const [showRemoveModal, setShowRemoveModal] = useState(false);
+  const [showChangePriceModal, setShowChangePriceModal] = useState(false);
+  const [showMessageModal, setShowMessageModal] = useState(false);
+  
   const [selectedAlert, setSelectedAlert] = useState(null);
+  const [newTargetPrice, setNewTargetPrice] = useState('');
+  const [modalMessage, setModalMessage] = useState('');
 
-  const handleRemoveClick = (alert) => {
+  // Fetch price alerts on mount
+  useEffect(() => {
+    apiGet('/products/favorites/price-alerts')
+      .then(res => {
+        if (res.detail && res.detail.code === 1) {
+          setAlerts(res.detail.data.map(item => ({
+            favorite_id: item.favorite_id, 
+            product_id: item.id, 
+            id: item.id,
+            title: item.title,
+            image: item.image,
+            currentPrice: item.current_price,
+            targetPrice: item.target_price,
+          })));
+        } else {
+          setAlerts([]);
+          if(res.detail?.error){
+            setModalMessage(res.detail.error);
+            setShowMessageModal(true);
+          }
+        }
+      })
+      .catch(err => {
+        console.error("Error fetching price alerts:", err);
+        setModalMessage("Failed to load price alerts.");
+        setShowMessageModal(true);
+      });
+  }, []);
+
+  // Filter alerts by search query
+  const filteredAlerts = alerts.filter(alert =>
+    alert.title.toLowerCase().includes(searchQuery.toLowerCase())
+  );
+
+  // Remove alert modal open
+  const handleBellClick = (alert) => {
     setSelectedAlert(alert);
-    setShowModal(true);
+    setShowRemoveModal(true);
   };
 
+  // Confirm remove price alert API call
   const confirmRemove = () => {
-    setAlerts(alerts.filter(a => a.id !== selectedAlert.id));
-    setShowModal(false);
-    setSelectedAlert(null);
+    apiPost('/products/favorites/remove-price-alert', { 
+      favorite_id: selectedAlert.product_id  })
+      .then(res => {
+        if (res.resp && res.resp.code === 1) {
+          setAlerts(prev => prev.filter(a => a.favorite_id !== selectedAlert.favorite_id));
+          setModalMessage("Removed from Price Alerts");
+        } else {
+          setModalMessage(res.resp.error || "Failed to remove price alert");
+        }
+        setShowMessageModal(true);
+        setShowRemoveModal(false);
+        setSelectedAlert(null);
+      })
+      .catch(err => {
+        console.error("Error removing price alert:", err);
+        setModalMessage("Error removing price alert");
+        setShowMessageModal(true);
+      });
   };
 
   const cancelRemove = () => {
-    setShowModal(false);
+    setShowRemoveModal(false);
     setSelectedAlert(null);
+  };
+
+  // Open modal for changing target price
+  const handleChangeTargetPrice = (alert) => {
+    setSelectedAlert(alert);
+    setNewTargetPrice(alert.targetPrice);
+    setShowChangePriceModal(true);
+  };
+
+  // Submit new target price API call
+  const submitNewTargetPrice = () => {
+    const price = parseInt(newTargetPrice);
+    if (isNaN(price) || price <= 0) {
+      setModalMessage("Invalid value entered!");
+      setShowMessageModal(true);
+      setShowChangePriceModal(false);
+      return;
+    }
+
+    apiPost('/products/favorites/update-price-alert', {
+      favorite_id: selectedAlert.product_id,
+      price_alert: price
+    })
+      .then(res => {
+        if (res.resp && res.resp.code === 1) {
+          setAlerts(prev =>
+            prev.map(item =>
+              item.favorite_id === selectedAlert.favorite_id
+                ? { ...item, targetPrice: price }
+                : item
+            )
+          );
+          setModalMessage(res.resp.message || `Target price updated to Rs ${price.toLocaleString()}`);
+        } else {
+          setModalMessage(res.resp.error || "Failed to update price alert");
+        }
+        setShowMessageModal(true);
+        setShowChangePriceModal(false);
+        setSelectedAlert(null);
+        setNewTargetPrice('');
+      })
+      .catch(err => {
+        console.error("Error updating price alert:", err);
+        setModalMessage("Error updating price alert");
+        setShowMessageModal(true);
+      });
   };
 
   return (
     <>
-    <MainHeader/>
-    <div className="alerts-container">
-      <h2 className="alerts-title"><FaBell /> Price Alerts</h2>
-
-      {alerts.length === 0 ? (
-        <p className="empty-text">You have no active price alerts.</p>
-      ) : (
-        <div className="alerts-grid">
-          {alerts.map(alert => (
-            <div key={alert.id} className="alert-card">
-              <img src={alert.image} alt={alert.title} className="alert-img" />
-              <div className="alert-info">
-                <h3>{alert.title}</h3>
-                <p><strong>Target Price:</strong> Rs. {alert.targetPrice.toLocaleString()}</p>
-                <p><strong>Tracking:</strong> {alert.platforms.join(', ')}</p>
-              </div>
-              <button className="remove-alert-btn" onClick={() => handleRemoveClick(alert)}>
-                <FaRegTrashAlt /> Remove
-              </button>
-            </div>
-          ))}
+      <MainHeader />
+      <Navbar />
+      {showMessageModal && (
+        <div className="custom-modal">
+          <div className="custom-modal-content">
+            <p>{modalMessage}</p>
+            <button onClick={() => setShowMessageModal(false)} className="modal-close-btn">Close</button>
+          </div>
         </div>
       )}
 
-      {showModal && selectedAlert && (
-        <RemoveConfirmationModal
-          product={selectedAlert}
-          onConfirm={confirmRemove}
-          onCancel={cancelRemove}
-        />
-      )}
-      <Footer/>
-    </div>
+      <div className="alerts-container">
+        <h2 className="alerts-title">Price Alerts</h2>
+
+        {filteredAlerts.length === 0 ? (
+          <p className="empty-text">No price alerts match your search.</p>
+        ) : (
+          <div className="favourites-grid">
+            {filteredAlerts.map(alert => {
+              const targetReached = alert.currentPrice <= alert.targetPrice;
+              return (
+                <div key={alert.favorite_id} className="favourite-card">
+                  <span 
+                    className="heart-icon" 
+                    onClick={() => handleBellClick(alert)}
+                  >
+                    <BsBellFill color="#f1a900ff" size={22} /> 
+                  </span>
+
+                  <img src={alert.image} alt={alert.title} className="favourite-img" />
+                  <h3 className="product-title">{alert.title?.slice(0,50)}</h3>
+                  <div className="price-details">
+                    <span className="new-price">
+                      Current: Rs {alert.currentPrice.toLocaleString()}
+                    </span>
+                  </div>
+                  <p className="alert-text">
+                    Target Price: Rs {alert.targetPrice.toLocaleString()}
+                  </p>
+
+                  {targetReached && (
+                    <div className="target-reached-badge">
+                      <BsFillCheckCircleFill className="target-reached-icon" />
+                      Target Price Reached
+                    </div>
+                  )}
+
+                  <div className="favourite-actions">
+                    <Link to={`/product/${alert.id}`} className="compare-btn">
+                      Compare Prices
+                    </Link>
+                    <button
+                      className="alert-btn"
+                      onClick={() => handleChangeTargetPrice(alert)}
+                    >
+                      Change Target Price
+                    </button>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        )}
+
+        {/* Remove Confirmation Modal */}
+        {showRemoveModal && selectedAlert && (
+          <RemoveConfirmationModal
+            product={selectedAlert}
+            pageName="Price Alerts"
+            onConfirm={confirmRemove}
+            onCancel={cancelRemove}
+          />
+        )}
+
+        {/* Change Target Price Modal */}
+        {showChangePriceModal && selectedAlert && (
+          <div className="priceAlert-modal">
+            <div className="priceAlert-modal-content">
+              <h3>Change Target Price</h3>
+              <input
+                type="number"
+                value={newTargetPrice}
+                onChange={(e) => setNewTargetPrice(e.target.value)}
+                placeholder="Enter new target price"
+                min="1"
+              />
+              <div className="priceAlert-modal-buttons">
+                <button onClick={submitNewTargetPrice} className="modal-btn">Save</button>
+                <button onClick={() => setShowChangePriceModal(false)} className="modal-close-btn">Cancel</button>
+              </div>
+            </div>
+          </div>
+        )}
+      </div>
+      <Footer />
     </>
   );
 };

@@ -172,6 +172,7 @@
   cursor: pointer;
   border: 2px solid #e0e0e0;
   width: 100%;
+  height: 300px;
   max-width: 300px;
   margin: 0 auto;
 }
@@ -273,6 +274,7 @@
   cursor: pointer;
   border: 4px solid #ddd;
   width: 250px;
+  height: 300px;
 }
 
 .update-item:hover {

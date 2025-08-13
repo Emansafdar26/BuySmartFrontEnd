@@ -14,6 +14,7 @@ import category_washing from "../Assets/category_washing.jpeg";
 import category_oven from "../Assets/category_oven.jpeg";
 import category_ac from "../Assets/category_ac.webp";
 import { apiGet } from '../lib/apiwrapper';
+import { Link } from "react-router-dom";
 
 const images = [
   { src: SmartTV3, caption: "Latest Smart TVs at the Best Prices" },
@@ -190,41 +191,55 @@ const Home = () => {
         </section>
 
         <section className="trending-deals">
-          <h2>Trending Deals</h2>
-          <div className="deals-grid">
-            {filteredTrendingDeals.map((deal, index) => {
-              const oldPrice = parseFloat(deal.old_price.replace("Rs ", ""));
-              const price = parseFloat(deal.current_price.replace("Rs ", ""));
-              const discount = ((oldPrice - price) / oldPrice) * 100;
+            <h2>Trending Deals</h2>
+            <div className="deals-grid">
+              {filteredTrendingDeals.map((deal) => {
+                const oldPrice = deal.old_price ? parseFloat(deal.old_price.replace("Rs ", "")) : 0;
+                const price = deal.current_price ? parseFloat(deal.current_price.replace("Rs ", "")) : 0;
+                const discount = oldPrice > 0 ? ((oldPrice - price) / oldPrice) * 100 : 0;
 
-              return (
-                <div key={index} className="deal-item">
-                  <img src={deal.image_url} alt={deal.name} />
-                  <p>{deal.name}</p>
-                  <span className="new-price">Rs {Number(deal.current_price.replace("Rs ", "")).toLocaleString()}</span>
-                  <span className="old-price">Rs {Number(deal.old_price.replace("Rs ", "")).toLocaleString()}</span>
-                  <span className="discount-badge">
-                    {discount.toFixed(0)}% OFF
-                  </span>
-                </div>
-              );
-            })}
-          </div>
-        </section>
+                return (
+                  <Link
+                    to={`/product/${deal.id}`}
+                    key={deal.id}
+                    className="deal-item-link"
+                  >
+                    <div className="deal-item">
+                      <img src={deal.image_url} alt={deal.name} />
+                      <p>{deal.name}</p>
+                      <span className="new-price">{deal.current_price}</span>
+                      <span className="old-price">{deal.old_price}</span>
+                      <span className="discount-badge">
+                        {discount.toFixed(0)}% OFF
+                      </span>
+                    </div>
+                  </Link>
+                );
+              })}
+            </div>
+          </section>
 
-        <section className="recent-price-updates">
-          <h2>Recent Price Updates</h2>
-          <div className="updates-grid">
-            {filteredRecentUpdates.map((update, index) => (
-              <div key={index} className="update-item">
-                <img src={update.image_url} alt={update.name} />
-                <p>{update.name}</p>
-                <span className="price">{update.price}</span>
-                <span className="timestamp">Updated: {new Date(update.lastUpdated).toLocaleString()}</span>
+          <section className="recent-price-updates">
+              <h2>Recent Price Updates</h2>
+              <div className="updates-grid">
+                {filteredRecentUpdates.map((update) => (
+                  <Link
+                    to={`/product/${update.id}`}
+                    key={update.id}
+                    className="update-item-link"
+                  >
+                    <div className="update-item">
+                      <img src={update.image_url} alt={update.name} />
+                      <p>{update.name}</p>
+                      <span className="price">{update.price}</span>
+                      <span className="timestamp">
+                        Updated: {new Date(update.lastUpdated).toLocaleString()}
+                      </span>
+                    </div>
+                  </Link>
+                ))}
               </div>
-            ))}
-          </div>
-        </section>
+            </section>
       </main>
       <Footer />
     </>
