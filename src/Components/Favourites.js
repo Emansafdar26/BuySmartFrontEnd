@@ -8,6 +8,7 @@ import Footer from './Footer';
 import RemoveConfirmationModal from './RemoveConfirmationModal'; 
 import { BsHeart, BsHeartFill, BsBell, BsBellFill } from "react-icons/bs";
 import { apiGet, apiPost } from '../lib/apiwrapper';
+import { useNavigate } from "react-router-dom";
 
 const Favourites = () => {
   const { searchQuery } = useSearch(); 
@@ -19,22 +20,29 @@ const Favourites = () => {
   const [showAlertModal, setShowAlertModal] = useState(false);
   const [showRemoveModal, setShowRemoveModal] = useState(false);
   const { search } = useParams();
+  const navigate = useNavigate();
 
-  // Fetch all favourites from backend once component mounts
+  // ✅ Fixed: proxyImage with backticks
+  const proxyImage = (url) => 
+    `http://localhost:8000/image-proxy?url=${encodeURIComponent(url)}`;
+
   useEffect(() => {
-    getFavoriteProducts({})
-
+    getFavoriteProducts({});
   }, []);
 
+  const handleSearch = (path) => {
+    if (path === "/favourites") navigate("/products");
+  };
+
   const getFavoriteProducts = (data) => {
-        apiPost('/products/favorites/all', data)
+    apiPost('/products/favorites/all', data)
       .then(res => {
         if (res.detail && res.detail.code === 1) {
           setFavourites(res.detail.data.map(item => ({
             favorite_id: item.favorite_id,  
             id: item.id,                  
             title: item.title,
-            image: item.image,
+            image: proxyImage(item.image), 
             price: item.price,
             priceAlert: item.price_alert,
             isFavourite: true 
@@ -46,13 +54,13 @@ const Favourites = () => {
       .catch(err => {
         console.error("Error fetching favourites:", err);
       });
-  }
+  };
+
   const filteredFavourites = favourites.filter(product =>
     product.isFavourite && product.title.toLowerCase().includes(searchQuery.toLowerCase())
   );
   const isSearchActive = searchQuery.trim() !== "";
 
-  // Remove from favourites API (uses product_id)
   const confirmRemove = () => {
     apiPost('/products/removefavorite', { product_id: selectedProduct.id })
       .then(res => {
@@ -66,7 +74,7 @@ const Favourites = () => {
           );
           setModalMessage("Removed from favourites");
         } else {
-          setModalMessage(res.resp.error || "Failed to remove favourite");
+          setModalMessage(res.resp?.error || "Failed to remove favourite");
         }
         setShowMessageModal(true);
         setShowRemoveModal(false);
@@ -82,13 +90,6 @@ const Favourites = () => {
     setShowRemoveModal(true);
   };
 
-  const handleSearch = (route) => {
-    if (route === '/favourites') {
-      getFavoriteProducts({ searchQuery })
-    }
-  }
-
-  // Set price alert API (uses favorite_id)
   const submitPriceAlert = () => {
     const price = parseInt(alertInput);
 
@@ -112,9 +113,10 @@ const Favourites = () => {
                 : item
             )
           );
+          // ✅ Fixed: wrapped in backticks
           setModalMessage(`Price alert set at Rs ${price.toLocaleString()}`);
         } else {
-          setModalMessage(res.detail.error || "Failed to set price alert");
+          setModalMessage(res.detail?.error || "Failed to set price alert");
         }
         setAlertInput('');
         setShowAlertModal(false);
@@ -204,6 +206,7 @@ const Favourites = () => {
                 )}
 
                 <div className="favourite-actions">
+                  {/* ✅ Fixed: Dynamic route with backticks */}
                   <Link to={`/product/${product.id}`} className="compare-btn">
                     Compare Prices
                   </Link>

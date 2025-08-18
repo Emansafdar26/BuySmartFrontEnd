@@ -1,24 +1,26 @@
 import React, { useState, useEffect } from "react";
 import MainHeader from "../../Components/MainHeader";
 import { useSearch } from "../context/SearchContext";
-import { apiGet, apiPost, apiPut } from "../../lib/apiwrapper"; // <-- added apiPut
-// Make sure you have apiPut function. If not, I can give you the code.
+import { apiGet, apiPost} from "../../lib/apiwrapper";
 
 const Products = () => {
   const { searchQuery } = useSearch();
 
   const [products, setProducts] = useState([]);
   const [filteredProducts, setFilteredProducts] = useState([]);
+  const [categories, setCategories] = useState([]);
+  const [sortOption, setSortOption] = useState("all-products");
+
+  // Modals & form state
   const [showAddModal, setShowAddModal] = useState(false);
   const [showRemoveModal, setShowRemoveModal] = useState(false);
   const [showEditModal, setShowEditModal] = useState(false);
   const [selectedProduct, setSelectedProduct] = useState(null);
-  const [errors, setErrors] = useState({});
   const [newProduct, setNewProduct] = useState({ name: "", category: "" });
   const [formError, setFormError] = useState("");
-  const [sortOption, setSortOption] = useState("all-products");
-  const [categories, setCategories] = useState([]);
+  const [errors, setErrors] = useState({});
 
+  /** Fetch products */
   const fetchProducts = async () => {
     try {
       const response = await apiGet("/admin/available-products");
@@ -33,6 +35,7 @@ const Products = () => {
     }
   };
 
+  /** Fetch categories */
   const fetchCategories = async () => {
     try {
       const response = await apiGet("/categories");
@@ -47,11 +50,13 @@ const Products = () => {
     }
   };
 
+  /** Load initial data */
   useEffect(() => {
     fetchProducts();
     fetchCategories();
   }, []);
 
+  /** Filter + sort */
   useEffect(() => {
     let sortedProducts = [...products];
 
@@ -68,8 +73,9 @@ const Products = () => {
     );
   }, [searchQuery, products, sortOption]);
 
+  /** Add Product */
   const handleAddProduct = async () => {
-    if (newProduct.name.trim() === "" || newProduct.category.trim() === "") {
+    if (!newProduct.name.trim() || !newProduct.category.trim()) {
       setFormError("All fields are required.");
       return;
     }
@@ -81,7 +87,7 @@ const Products = () => {
       });
 
       if (response?.detail?.code === 1) {
-        await fetchProducts(); // Reload products from backend
+        await fetchProducts();
         setShowAddModal(false);
         setNewProduct({ name: "", category: "" });
         setFormError("");
@@ -94,8 +100,12 @@ const Products = () => {
     }
   };
 
+  /** Edit product - open modal */
   const handleEditClick = (product) => {
-    const categoryObj = categories.find(cat => cat.name.toLowerCase() === product.category_name.toLowerCase());
+    const categoryObj = categories.find(
+      (cat) => cat.name.toLowerCase() === product.category_name.toLowerCase()
+    );
+
     setSelectedProduct({
       ...product,
       category: categoryObj ? categoryObj.name : "",
@@ -103,17 +113,21 @@ const Products = () => {
     setShowEditModal(true);
   };
 
+  /** Submit edited product */
   const handleEditSubmit = async () => {
-    if (selectedProduct.name.trim() === "" || selectedProduct.category.trim() === "") {
+    if (!selectedProduct.name.trim() || !selectedProduct.category.trim()) {
       setFormError("All fields are required.");
       return;
     }
 
     try {
-      const response = await apiPost(`/admin/available-products/${selectedProduct.id}`, {
-        name: selectedProduct.name.trim(),
-        category_name: selectedProduct.category.trim().toLowerCase(),
-      });
+      const response = await apiPost(
+        `/admin/available-products/${selectedProduct.id}`,
+        {
+          name: selectedProduct.name.trim(),
+          category_name: selectedProduct.category.trim().toLowerCase(),
+        }
+      );
 
       if (response?.detail?.code === 1) {
         await fetchProducts();
@@ -129,20 +143,25 @@ const Products = () => {
     }
   };
 
+  /** Delete product - open modal */
   const handleRemoveClick = (product) => {
     setSelectedProduct(product);
     setShowRemoveModal(true);
   };
 
+  /** Confirm delete */
   const confirmRemove = async () => {
     try {
-      const response = await apiPost(`/admin/available-products/del/${selectedProduct.id}`);
+      const response = await apiPost(
+        `/admin/available-products/del/${selectedProduct.id}`
+      );
+
       if (response?.detail?.code === 1) {
         await fetchProducts();
         setShowRemoveModal(false);
         setSelectedProduct(null);
       } else {
-        console.error(response.detail.error || "Failed to delete product.");
+        console.error(response?.detail?.error || "Failed to delete product.");
       }
     } catch (error) {
       console.error("Delete error:", error);
@@ -153,15 +172,19 @@ const Products = () => {
     <>
       <MainHeader />
       <div className="products-container">
-        <h2>Products</h2>
+        <h1 className="products-title">Products</h1>
 
+        {/* Actions */}
         <div className="user-actions">
           <button className="add-product-btn" onClick={() => setShowAddModal(true)}>
             Add Product
           </button>
 
           <div className="filter-container">
-            <select value={sortOption} onChange={(e) => setSortOption(e.target.value)}>
+            <select
+              value={sortOption}
+              onChange={(e) => setSortOption(e.target.value)}
+            >
               <option value="all-products">All Products</option>
               <option value="name-asc">From A to Z</option>
               <option value="name-desc">From Z to A</option>
@@ -169,6 +192,7 @@ const Products = () => {
           </div>
         </div>
 
+        {/* Products Table */}
         <table className="products-table">
           <thead>
             <tr>
@@ -186,14 +210,26 @@ const Products = () => {
                   <td>{product.name}</td>
                   <td>{product.category_name}</td>
                   <td>
-                    <button className="edit-product-btn" onClick={() => handleEditClick(product)}>Edit</button>
-                    <button className="remove-product-btn" onClick={() => handleRemoveClick(product)}>Delete</button>
+                    <button
+                      className="edit-product-btn"
+                      onClick={() => handleEditClick(product)}
+                    >
+                      Edit
+                    </button>
+                    <button
+                      className="remove-product-btn"
+                      onClick={() => handleRemoveClick(product)}
+                    >
+                      Delete
+                    </button>
                   </td>
                 </tr>
               ))
             ) : (
               <tr>
-                <td colSpan="4" className="no-results">No Products Found...</td>
+                <td colSpan="4" className="no-results">
+                  No Products Found...
+                </td>
               </tr>
             )}
           </tbody>
@@ -208,11 +244,15 @@ const Products = () => {
                 type="text"
                 placeholder="Product Name"
                 value={newProduct.name}
-                onChange={(e) => setNewProduct({ ...newProduct, name: e.target.value })}
+                onChange={(e) =>
+                  setNewProduct({ ...newProduct, name: e.target.value })
+                }
               />
               <select
                 value={newProduct.category}
-                onChange={(e) => setNewProduct({ ...newProduct, category: e.target.value })}
+                onChange={(e) =>
+                  setNewProduct({ ...newProduct, category: e.target.value })
+                }
               >
                 <option value="">Select Category</option>
                 {categories.map((cat, idx) => (
@@ -224,8 +264,15 @@ const Products = () => {
               {formError && <p className="form-error">{formError}</p>}
 
               <div className="modal-actions">
-                <button className="modal-confirm-btn" onClick={handleAddProduct}>Add</button>
-                <button className="modal-cancel-btn" onClick={() => setShowAddModal(false)}>Cancel</button>
+                <button className="modal-confirm-btn" onClick={handleAddProduct}>
+                  Add
+                </button>
+                <button
+                  className="modal-cancel-btn"
+                  onClick={() => setShowAddModal(false)}
+                >
+                  Cancel
+                </button>
               </div>
             </div>
           </div>
@@ -239,11 +286,18 @@ const Products = () => {
               <input
                 type="text"
                 value={selectedProduct.name}
-                onChange={(e) => setSelectedProduct({ ...selectedProduct, name: e.target.value })}
+                onChange={(e) =>
+                  setSelectedProduct({ ...selectedProduct, name: e.target.value })
+                }
               />
               <select
                 value={selectedProduct.category}
-                onChange={(e) => setSelectedProduct({ ...selectedProduct, category: e.target.value })}
+                onChange={(e) =>
+                  setSelectedProduct({
+                    ...selectedProduct,
+                    category: e.target.value,
+                  })
+                }
               >
                 <option value="">Select Category</option>
                 {categories.map((cat, idx) => (
@@ -255,8 +309,18 @@ const Products = () => {
               {formError && <p className="form-error">{formError}</p>}
 
               <div className="modal-actions">
-                <button className="modal-confirm-btn" onClick={handleEditSubmit}>Update</button>
-                <button className="modal-cancel-btn" onClick={() => setShowEditModal(false)}>Cancel</button>
+                <button
+                  className="modal-confirm-btn"
+                  onClick={handleEditSubmit}
+                >
+                  Update
+                </button>
+                <button
+                  className="modal-cancel-btn"
+                  onClick={() => setShowEditModal(false)}
+                >
+                  Cancel
+                </button>
               </div>
             </div>
           </div>
@@ -267,11 +331,21 @@ const Products = () => {
           <div className="modal-overlay">
             <div className="modal-box">
               <h3>Confirm Removal</h3>
-              <p>Are you sure you want to delete <strong>{selectedProduct.name}</strong>?</p>
+              <p>
+                Are you sure you want to delete{" "}
+                <strong>{selectedProduct.name}</strong>?
+              </p>
 
               <div className="modal-actions">
-                <button className="modal-confirm-btn" onClick={confirmRemove}>Yes, Remove</button>
-                <button className="modal-cancel-btn" onClick={() => setShowRemoveModal(false)}>Cancel</button>
+                <button className="modal-confirm-btn" onClick={confirmRemove}>
+                  Yes, Remove
+                </button>
+                <button
+                  className="modal-cancel-btn"
+                  onClick={() => setShowRemoveModal(false)}
+                >
+                  Cancel
+                </button>
               </div>
             </div>
           </div>

@@ -14,21 +14,21 @@ const Products = () => {
   const [allProducts, setProducts] = useState([]);
 
   const searchResults = () => {
-      apiPost('/products/search', { name: searchQuery })      .then((res) => {
-        if (res.detail) {
-          if (res.detail.code === 1 && res.detail.data) {
-            setProducts(res.detail.data)
-          } else if (res.detail.code === 0) {
-            let newErrors = {}
-            newErrors.products = res.detail.error
-            setErrors(newErrors)
-          }
-        } else {
+    apiPost('/products/search', { name: searchQuery }).then((res) => {
+      if (res.detail) {
+        if (res.detail.code === 1 && res.detail.data) {
+          setProducts(res.detail.data)
+        } else if (res.detail.code === 0) {
           let newErrors = {}
-          newErrors.products = "Unexpected response format."
+          newErrors.products = res.detail.error
           setErrors(newErrors)
         }
-      })
+      } else {
+        let newErrors = {}
+        newErrors.products = "Unexpected response format."
+        setErrors(newErrors)
+      }
+    })
       .catch((err) => {
         console.log("API error while fetching products:", err)
         let newErrors = {}
@@ -36,8 +36,8 @@ const Products = () => {
         setErrors(newErrors)
       })
   }
-    const handleSearch = (route) => {
-    if (route === '/Products') {
+  const handleSearch = (route) => {
+    if (route.toLowerCase() === '/products') {
       searchResults()
     }
   }
@@ -68,7 +68,11 @@ const Products = () => {
 
 
   useEffect(() => {
-    getProducts();
+    if (searchQuery) {
+      searchResults()
+    } else {
+      getProducts();
+    }
   }, []);
 
   return (
@@ -77,9 +81,8 @@ const Products = () => {
       <Navbar />
       <main className="product-container">
 
-    
+
         <div className="product-header">
-          <h2>All Products</h2>
         </div>
 
         <div className="product-grid">

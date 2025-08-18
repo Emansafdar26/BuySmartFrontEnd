@@ -23,42 +23,60 @@ const ForgotPassword = () => {
     setError("");
 
     if (!validateEmail()) return;
-      apiPost("/auth/forget-password", { email }).then((res) => {
+    apiPost("/auth/forget-password", { email })
+      .then((res) => {
         if (res.detail.code === 1) {
           setSuccess(res.detail.message || "Check your email for temporary password.");
         } else {
           setError(res.detail.error || "Something went wrong.");
         }
-      }).catch((err)=> {
-        console.log(err)
       })
-    }
+      .catch((err) => {
+        console.log(err);
+      });
+  };
 
   return (
-    <div className="forgot-password-container">
-      <h2 className="forgot-password-title">Forgot Password</h2>
-      <form onSubmit={handleSubmit} className="forgot-password-form">
-        <input
-          type="email"
-          className="forgot-password-input"
-          placeholder="Enter your email"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-        />
-        {error && <p className="forgot-password-error">{error}</p>}
-        {success && <p className="forgot-password-success">{success}</p>}
+    <div className="forgot-password-page">
+      <div className="forgot-password-container">
 
-        <button type="submit" className="forgot-password-button">
-          Send Reset Link
-        </button>
+        {/* Left Panel - Form */}
+        <div className="forgot-password-left-panel">
+          <h2>Forgot Password</h2>
+          <form onSubmit={handleSubmit}>
+            <input
+              type="email"
+              className="forgot-password-input"
+              placeholder="Enter your email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+            />
+            {error && <p className="forgot-password-error">{error}</p>}
+            {success && <p className="forgot-password-success">{success}</p>}
 
-        <p className="forgot-password-text">
-          Remembered your password?{" "}
-          <Link to="/login" className="forgot-password-link">
-            Login
-          </Link>
-        </p>
-      </form>
+            <button type="submit" className="forgot-password-button">
+              Send Reset Link
+            </button>
+
+            <p className="forgot-password-text">
+              Remembered your password?{" "}
+              <Link to="/login" className="forgot-password-link">
+                Login
+              </Link>
+            </p>
+
+            <Link to="/" className="forgot-password-back-btn">Back</Link>
+          </form>
+        </div>
+
+        {/* Right Panel - Welcome */}
+        <div className="forgot-password-right-panel">
+          <h2>Hello, Welcome!</h2>
+          <p>Enter email to get a temporary password.</p>
+         
+        </div>
+
+      </div>
     </div>
   );
 };

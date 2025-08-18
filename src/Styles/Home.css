@@ -1,12 +1,13 @@
 .main-content {
-  margin-top: 100px;
+  padding-top: 130px;
   text-align: center;
   animation: fadeIn 1s ease-in-out;
   background-color: #133c5b42;
   margin-bottom: -60px;
-  padding-left: 0px;
-  padding-right: 0px;
-  max-width: 100%;
+  padding-bottom: 20px;
+  padding-left: 100px;
+  padding-right: 100px;
+  
 }
 
 .featured-products {
@@ -15,7 +16,6 @@
   position: relative;
   overflow: hidden;
   padding-bottom: 30px;
-  padding-top: 50px
 }
 
 .carousel {
@@ -24,7 +24,6 @@
   align-items: center;
   position: relative;
   transition: all 0.3s ease;
-  width: 100%;
 }
 
 .carousel img {
@@ -55,6 +54,7 @@
   font-size: 18px;
   font-weight: bold;
   transition: background 0.3s ease-in-out;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 }
 
 .carousel-caption:hover {
@@ -97,6 +97,7 @@
   font-weight: bold;
   letter-spacing: 1px;
   text-transform: uppercase;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 }
 
 .categories-grid {
@@ -133,107 +134,110 @@
   color: #444;
   font-size: 17px;
   transition: color 0.3s ease-in-out;
+  text-decoration: none;
 }
 
 .category-item:hover p {
   color: #FF9F1C;
 }
+.category-item-link{
+  text-decoration: none;
+}
 
 .trending-deals {
   text-align: center;
-  margin: 80px 30px 60px;
+  margin: 80px 0 60px;
 }
 
 .trending-deals h2 {
-  font-size: 34px;
-  margin-bottom: 40px;
+  font-size: 32px;
+  margin-bottom: 30px;
   color: #1B1F3B;
-  font-weight: 700;
+  font-weight: bold;
   letter-spacing: 1px;
   text-transform: uppercase;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 }
 
 .deals-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
-  gap: 70px;
-  padding: 0 20px;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 46px;
+  padding: 10px 20px;
   justify-content: center;
+ 
 }
 
 .deal-item {
-  background: #fff;
-  padding: 20px;
-  border-radius: 12px;
-  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.08);
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  background: #ffffff;
+  padding: 18px;
+  border-radius: 10px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  transition: transform 0.3s ease;
   position: relative;
   text-align: center;
   cursor: pointer;
-  border: 2px solid #e0e0e0;
-  width: 100%;
-  height: 300px;
-  max-width: 300px;
-  margin: 0 auto;
+  border: 4px solid #ddd;
+  width: 250px;
+  height: 265px;
 }
 
 .deal-item:hover {
-  transform: translateY(-8px);
-  box-shadow: 0 12px 24px rgba(27, 31, 59, 0.2);
+  transform: scale(1.05);
+  box-shadow: 0 10px 20px #1b1f3bb6;
 }
 
 .deal-item img {
   width: 100%;
-  height: 180px;
+  height: 150px;
   object-fit: contain;
-  margin-bottom: 15px;
-  transition: transform 0.3s ease;
+  margin: 0 auto;
+  border-radius: 6px;
+  transition: transform 0.3s ease-in-out;
+ 
 }
 
 .deal-item img:hover {
-  transform: scale(1.08);
+  transform: scale(1.1);
 }
 
 .deal-item h3 {
-  font-size: 18px;
-  margin: 10px 0 5px;
-  font-weight: 600;
+  font-size: 16px;
+  margin-top: 10px;
+  font-weight: bold;
   color: #333;
 }
-
-.deal-item p {
-  font-weight: bold;
-  font-size: 16px;
-  margin: 5px 0;
-  color: #666;
+.deal-item p{
+  font-weight: bolder;
 }
 
 .new-price {
-  font-size: 20px;
+  font-size: 18px;
   font-weight: bold;
   color: #28a745;
   margin-top: 5px;
 }
 
 .old-price {
-  color: #dc3545;
+  color: red;
   font-size: 14px;
   text-decoration: line-through;
-  margin-top: 3px;
+  margin-top: 5px;
 }
 
 .discount-badge {
-  background: #ff4757;
-  color: #fff;
-  padding: 5px 10px;
-  border-radius: 8px;
-  font-weight: 600;
+  background: #ff0000;
+  color: white;
+  padding: 6px 12px;
+  border-radius: 6px;
+  font-weight: bold;
   position: absolute;
-  top: 15px;
-  right: 15px;
+  top: 10px;
+  right: 10px;
   font-size: 12px;
   animation: pulse 1.5s infinite;
 }
+
 
 @keyframes pulse {
   0% { transform: scale(1); opacity: 1; }
@@ -252,6 +256,7 @@
   color: #1B1F3B;
   font-weight: bold;
   text-transform: uppercase;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 }
 
 .updates-grid {
@@ -274,7 +279,7 @@
   cursor: pointer;
   border: 4px solid #ddd;
   width: 250px;
-  height: 300px;
+  height: 265px;
 }
 
 .update-item:hover {
@@ -349,12 +354,131 @@
     font-size: 24px;
   }
 }
-
+.update-item-link {
+text-decoration: none;
+}
+.deal-item-link {
+text-decoration: none;
+}
 @keyframes fadeIn {
   0% { opacity: 0; }
   100% { opacity: 1; }
 }
+.welcome-modal-overlay {
+  position: fixed;
+  top: 0; left: 0;
+  width: 100%; height: 100%;
+  background-color: rgba(0,0,0,0.6);
+  display: flex; justify-content: center; align-items: center;
+  z-index: 1000;
+  animation: fadeIn 0.5s ease-in-out;
+  overflow-y: auto; /* Allows scrolling if content is taller than viewport */
+  padding: 20px; /* Prevent modal from touching edges on small screens */
+  
+}
 
+.welcome-modal {
+  background: white;
+  border-radius: 12px;
+  padding: 30px 30px;
+  text-align: center;
+  width: 100%;       /* Full width for small screens */
+  max-width: 450px;  /* Fixed width on larger screens */
+  min-width: 300px;  /* Ensures it doesn’t shrink too much */
+  box-shadow: 0 0 20px rgba(0,0,0,0.3);
+  animation: slideIn 0.5s ease-in-out;
+  position: relative;
+  margin-top: 70px;
+}
+
+.welcome-modal h2 {
+  margin-bottom: 15px;
+  font-size: 28px;
+  color: #333;
+}
+
+.welcome-modal p {
+  font-size: 16px;
+  margin-bottom: 25px;
+  color: #555;
+}
+
+.modal-image {
+  width: 100%;
+  max-height: 200px; /* Prevents image from stretching */
+  border-radius: 10px;
+  margin-bottom: 15px;
+  object-fit: cover;
+}
+
+.modal-controls {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 15px;
+}
+
+.dots {
+  display: flex;
+  gap: 5px;
+}
+
+.dot {
+  width: 10px; height: 10px;
+  border-radius: 50%;
+  background: #ccc;
+  cursor: pointer;
+}
+
+.dot.active {
+  background: #ff6600;
+}
+
+.welcome-actions button {
+  padding: 10px 20px;
+  margin: 5px;
+  border: none; border-radius: 6px; cursor: pointer;
+  font-weight: bold;
+}
+
+.welcome-actions button:first-child {
+  background-color: #ff6600; color: white;
+}
+
+.welcome-actions button:last-child {
+  background-color: #ccc; color: #333;
+}
+
+.close-modal {
+  position: absolute;
+  top: 10px; right: 15px;
+  font-size: 22px; background: none; border: none; cursor: pointer;
+}
+
+/* Make modal responsive */
+@media (max-width: 480px) {
+  .welcome-modal {
+    padding: 20px 15px;
+    max-width: 100%;
+  }
+
+  .welcome-modal h2 {
+    font-size: 24px;
+  }
+
+  .welcome-modal p {
+    font-size: 14px;
+  }
+}
+
+@keyframes fadeIn {
+  from {opacity: 0;} to {opacity: 1;}
+}
+
+@keyframes slideIn {
+  from {transform: translateY(-50px); opacity: 0;} to {transform: translateY(0); opacity: 1;}
+}
 
 /*.main-content {
   padding-top: 50px;
@@ -624,4 +748,3 @@
   color: gray;
   margin-top: 5px;
 }*/
-

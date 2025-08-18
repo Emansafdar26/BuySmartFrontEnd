@@ -1,10 +1,27 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { BsFillArchiveFill, BsFillGrid3X3GapFill, BsPeopleFill, BsShop } from "react-icons/bs";
-import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, PieChart, Pie, Cell} from "recharts";
+import {
+  BsFillArchiveFill,
+  BsFillGrid3X3GapFill,
+  BsPeopleFill,
+  BsShop,
+} from "react-icons/bs";
+import {
+  BarChart,
+  Bar,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Tooltip,
+  Legend,
+  ResponsiveContainer,
+  PieChart,
+  Pie,
+  Cell,
+} from "recharts";
 import { useSearch } from "../context/SearchContext";
 import MainHeader from "../../Components/MainHeader";
-import { apiGet } from '../../lib/apiwrapper'
+import { apiGet } from "../../lib/apiwrapper";
 
 function Dashboard() {
   const { searchQuery } = useSearch();
@@ -24,7 +41,7 @@ function Dashboard() {
 
   useEffect(() => {
     const token = localStorage.getItem("token");
-  
+
     apiGet("/admin/categories/summary", token)
       .then((res) => {
         if (res.detail?.code === 1) {
@@ -38,10 +55,9 @@ function Dashboard() {
 
   const COLORS = ["#0088FE", "#00C49F", "#FFBB28", "#FF8042", "#2ECC71"];
 
-
   useEffect(() => {
     const token = localStorage.getItem("token");
-  
+
     apiGet("/admin/platforms/summary", token)
       .then((res) => {
         if (res.detail?.code === 1) {
@@ -57,60 +73,51 @@ function Dashboard() {
     const fetchStats = async () => {
       try {
         const response = await apiGet("/admin/stats");
-  
+
         if (response.detail) {
-          if (response.detail.code === 1) {
-            if (response.detail.data) {
-              setStats(response.detail.data);
-            }
+          if (response.detail.code === 1 && response.detail.data) {
+            setStats(response.detail.data);
           } else if (response.detail.code === 0) {
-            let newErrors = {};
-            newErrors.stats = response.detail.error;
-            setErrors(newErrors);
+            setErrors({ stats: response.detail.error });
           }
         } else {
-          let newErrors = {};
-          newErrors.stats = "Unexpected response format.";
-          setErrors(newErrors);
+          setErrors({ stats: "Unexpected response format." });
         }
       } catch (error) {
         console.error("Failed to load stats:", error.message);
-        let newErrors = {};
-        newErrors.stats = "Failed to fetch stats.";
-        setErrors(newErrors);
+        setErrors({ stats: "Failed to fetch stats." });
       } finally {
         setLoading(false);
       }
     };
-  
+
     fetchStats();
   }, []);
-  
 
   const cards = [
     {
       title: "CATEGORIES",
       value: stats.categories,
       icon: <BsFillGrid3X3GapFill className="card_icon" />,
-      route: "/categories",
+      route: "/admin/categories",
     },
     {
       title: "PRODUCTS",
       value: stats.products,
       icon: <BsFillArchiveFill className="card_icon" />,
-      route: "/products",
+      route: "/admin/products",
     },
     {
       title: "USERS",
       value: stats.users,
       icon: <BsPeopleFill className="card_icon" />,
-      route: "/users",
+      route: "/admin/users",
     },
     {
       title: "PLATFORMS",
       value: stats.platforms,
       icon: <BsShop className="card_icon" />,
-      route: "/platforms",
+      route: "/admin/platforms",
     },
   ];
 
@@ -125,60 +132,72 @@ function Dashboard() {
   return (
     <>
       <MainHeader />
-      <main className="admin-main-container">
-        <div className="admin-title">
-          <h3>DASHBOARD</h3>
-        </div>
+      <div id="admin-content">
+        <main className="admin-main-container">
+          <div className="admin-title">
+            <h1 className="categories-title" style={{ marginBottom: "40px" }}>
+              DASHBOARD
+            </h1>
+          </div>
 
-        <div className="main-cards">
-          {filteredCards.map((card, index) => (
-            <div
-              className="card"
-              key={index}
-              onClick={() => handleCardClick(card.route)}
-              style={{ cursor: "pointer" }}
-            >
-              <div className="card-inner">
-                <h3>{card.title}</h3>
-                {card.icon}
-              </div>
-              <h1>{card.value}</h1>
-            </div>
-          ))}
-        </div>
-
-        <div className="charts">
-          <ResponsiveContainer width="100%" height={300}>
-            <BarChart data={platformData} margin={{ top: 5, right: 30, left: 20, bottom: 5 }}>
-              <CartesianGrid strokeDasharray="3 3" />
-              <XAxis dataKey="name" />
-              <YAxis />
-              <Tooltip />
-              <Legend />
-              <Bar dataKey="value" fill="#00C49F" />
-            </BarChart>
-          </ResponsiveContainer>
-
-          <ResponsiveContainer>
-            <PieChart>
-              <Pie
-                data={categoryData}
-                cx="50%"
-                cy="50%"
-                outerRadius={100}
-                fill="#8884d8"
-                dataKey="value"
+          <div className="main-cards">
+            {filteredCards.map((card, index) => (
+              <div
+                className="card"
+                key={index}
+                onClick={() => handleCardClick(card.route)}
+                style={{ cursor: "pointer" }}
               >
-                {categoryData.map((entry, index) => (
-                  <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
-                ))}
-              </Pie>
-              <Tooltip />
-              <Legend />
-            </PieChart>
-          </ResponsiveContainer>
-        </div>
-      </main>
+                <div className="card-inner">
+                  <h3>{card.title}</h3>
+                  {card.icon}
+                </div>
+                <h1>{card.value}</h1>
+              </div>
+            ))}
+          </div>
+
+          <div className="charts">
+            {/* Bar chart */}
+            <ResponsiveContainer width="100%" height={300}>
+              <BarChart
+                data={platformData}
+                margin={{ top: 5, right: 30, left: 20, bottom: 5 }}
+              >
+                <CartesianGrid strokeDasharray="3 3" />
+                <XAxis dataKey="name" />
+                <YAxis />
+                <Tooltip />
+                <Legend />
+                <Bar dataKey="value" fill="#00C49F" />
+              </BarChart>
+            </ResponsiveContainer>
+
+            {/* Pie chart */}
+            <ResponsiveContainer width="100%" height={300}>
+              <PieChart>
+                <Pie
+                  data={categoryData}
+                  cx="50%"
+                  cy="50%"
+                  outerRadius={100}
+                  fill="#8884d8"
+                  dataKey="value"
+                >
+                  {categoryData.map((entry, index) => (
+                    <Cell
+                      key={`cell-${index}`}
+                      fill={COLORS[index % COLORS.length]}
+                    />
+                  ))}
+                </Pie>
+                <Tooltip />
+                <Legend />
+              </PieChart>
+            </ResponsiveContainer>
+          </div>
+        </main>
+      </div>
     </>
   );
 }

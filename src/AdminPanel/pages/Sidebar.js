@@ -18,27 +18,27 @@ function Sidebar({ openSidebarToggle, OpenSidebar }) {
         </li>
         <li className="sidebar-list-item">
           <NavLink to="/admin/users" className={({ isActive }) => isActive ? "active" : ""}>
-            <BsPeopleFill className="icon" /> Users
+            <BsPeopleFill className="icon" />Manage Users
           </NavLink>
         </li>
         <li className="sidebar-list-item">
           <NavLink to="/admin/products" className={({ isActive }) => isActive ? "active" : ""}>
-            <BsFillArchiveFill className="icon" /> Products
+            <BsFillArchiveFill className="icon" />Manage Products
           </NavLink>
         </li>
         <li className="sidebar-list-item">
           <NavLink to="/admin/categories" className={({ isActive }) => isActive ? "active" : ""}>
-            <BsFillGrid3X3GapFill className="icon" /> Categories
+            <BsFillGrid3X3GapFill className="icon" />Manage Categories
           </NavLink>
         </li>
         <li className="sidebar-list-item">
           <NavLink to="/admin/platforms" className={({ isActive }) => isActive ? "active" : ""}>
-            <BsShop className="icon" /> Platforms
+            <BsShop className="icon" />Manage Platforms
           </NavLink>
         </li>
         <li className="sidebar-list-item">
           <NavLink to="/admin/scraper" className={({ isActive }) => isActive ? "active" : ""}>
-            <BsGearFill className="icon" /> Scraper
+            <BsGearFill className="icon" />Manage Scraper
           </NavLink>
         </li>
       </ul>

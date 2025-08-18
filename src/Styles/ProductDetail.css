@@ -1,19 +1,15 @@
 /* Product Details Container */
 .product-details-container {
   display: flex;
-  justify-content: center;
-  align-items: flex-start;
   flex-wrap: wrap;
-  gap: 40px;
   padding: 30px;
-  max-width: 1200px;
-  margin: 40px auto 0 280px;
-  background-color: var(--background-color);
+  margin-top: 150px;
+  background-color: #133c5b42;
 }
 
 /* Product Info Card */
 .product-info {
-  width: 400px;
+  width: 300px;
   background-color: gainsboro;
   color: var(--text-color);
   border-radius: 10px;
@@ -23,6 +19,7 @@
   display: flex;
   flex-direction: column;
   align-items: center;
+  margin-left: 50px;
 }
 
 .product-detail-image {
@@ -33,7 +30,9 @@
   object-fit: cover;
   box-shadow: 0 4px 8px var(--shadow-color);
 }
-
+.favourite-icon {
+  cursor: pointer;
+}
 /* Icon Buttons (Favourite + Alert) */
 .product-info span {
   transition: transform 0.2s ease;
@@ -52,7 +51,7 @@
 
 .price-chart {
   width: 100%;
-  max-width: 480px;
+  max-width: 780px;
   background: gainsboro;
   padding: 15px;
   border-radius: 10px;
@@ -68,19 +67,23 @@
 
 /* Lower Section */
 .comparison-bottom-section {
-  max-width: 1200px;
-  margin: 40px auto;
-  margin-left: 280px;
+ margin-bottom: -60px;
   padding: 0 20px;
+  background-color: #133c5b42 ;
+  padding-bottom: 50px;
 }
 
-/* Sort/Filter Icon */
 .filter-row {
   display: flex;
+  float: right;
   justify-content: center;
   align-items: center;
   position: relative;
   margin-bottom: 15px;
+  background-color: gainsboro;
+  margin-top: 50px;
+   margin-right: 50px;
+   border-radius: 6px;
 }
 
 .filter-icon {
@@ -103,6 +106,7 @@
   display: flex;
   flex-direction: column;
   width: 220px;
+  margin-top: 10px;
 }
 
 .sort-dropdown button {
@@ -114,31 +118,50 @@
   cursor: pointer;
   transition: background-color 0.2s ease;
 }
-
+.sort-btn{
+  cursor: pointer;
+  height: 40px;
+  width: 150px;
+  border-radius: 6px;
+ border:  2px solid #ccc;;
+}
 .sort-dropdown button:hover {
   background-color: #f0f0f0;
+}
+.sort-icon {
+  margin-left: 8px;
+  transition: transform 0.3s ease;
+}
+
+.sort-icon.open {
+  transform: rotate(180deg);
 }
 
 /* Comparison Cards */
 .compare-title {
-  font-size: 1.3rem;
+  font-size: 30px;
   font-weight: bold;
   text-align: center;
-  margin-bottom: 20px;
+  margin-bottom: 50px;
   color: var(--text-color);
+  margin-top: 0px;
+  padding-top: 50px;
+  padding-left: 70px;
 }
 
 .price-cards {
   display: flex;
   flex-direction: column;
   gap: 15px;
+  padding-left: 50px;
+  padding-right: 50px;
 }
 
 .price-card {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  background: #f9f9f9;
+  background: gainsboro;
   padding: 15px;
   border-radius: 8px;
   box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
@@ -148,17 +171,23 @@
   width: 50px;
   height: 50px;
   object-fit: contain;
+  padding-right: 15px;
+}
+.product-details-parent {
+  width: 100%;
+  padding-right: 10px;
 }
 
 .platform-details {
-  flex: 1;
-  margin-left: 15px;
+  display: flex;
+  flex-wrap: wrap;
+  width: 100%;
+  justify-content: space-between;
 }
 
 .platform-name {
   display: block;
   font-weight: 600;
-  margin-bottom: 5px;
 }
 
 .platform-price {

@@ -3,23 +3,30 @@ import '../Styles/PriceAlerts.css';
 import RemoveConfirmationModal from './RemoveConfirmationModal';
 import { BsBellFill, BsFillCheckCircleFill } from 'react-icons/bs';
 import { useSearch } from "../AdminPanel/context/SearchContext";
-import MainHeader from './MainHeader';
+import Header from './MainHeader';
 import Navbar from './Navbar';
 import Footer from './Footer';
 import { Link } from 'react-router-dom';
-import { apiGet, apiPost } from '../lib/apiwrapper'; // your helper to call backend APIs
+import { apiGet, apiPost } from '../lib/apiwrapper';
+import { useNavigate } from "react-router-dom";
 
 const PriceAlerts = () => {
   const { searchQuery } = useSearch();
   const [alerts, setAlerts] = useState([]);
-  
+  const navigate = useNavigate();
   const [showRemoveModal, setShowRemoveModal] = useState(false);
   const [showChangePriceModal, setShowChangePriceModal] = useState(false);
   const [showMessageModal, setShowMessageModal] = useState(false);
-  
   const [selectedAlert, setSelectedAlert] = useState(null);
   const [newTargetPrice, setNewTargetPrice] = useState('');
   const [modalMessage, setModalMessage] = useState('');
+
+  // Helper to route images through FastAPI proxy
+  const proxyImage = (url) => `http://localhost:8000/image-proxy?url=${encodeURIComponent(url)}`;
+  
+  const handleSearch = (path) => {
+    if (path === "/price-alerts") navigate("/products");
+  };
 
   // Fetch price alerts on mount
   useEffect(() => {
@@ -31,7 +38,7 @@ const PriceAlerts = () => {
             product_id: item.id, 
             id: item.id,
             title: item.title,
-            image: item.image,
+            image: proxyImage(item.image), // use proxy
             currentPrice: item.current_price,
             targetPrice: item.target_price,
           })));
@@ -70,7 +77,7 @@ const PriceAlerts = () => {
           setAlerts(prev => prev.filter(a => a.favorite_id !== selectedAlert.favorite_id));
           setModalMessage("Removed from Price Alerts");
         } else {
-          setModalMessage(res.resp.error || "Failed to remove price alert");
+          setModalMessage(res.resp?.error || "Failed to remove price alert");
         }
         setShowMessageModal(true);
         setShowRemoveModal(false);
@@ -120,7 +127,7 @@ const PriceAlerts = () => {
           );
           setModalMessage(res.resp.message || `Target price updated to Rs ${price.toLocaleString()}`);
         } else {
-          setModalMessage(res.resp.error || "Failed to update price alert");
+          setModalMessage(res.resp?.error || "Failed to update price alert");
         }
         setShowMessageModal(true);
         setShowChangePriceModal(false);
@@ -136,7 +143,7 @@ const PriceAlerts = () => {
 
   return (
     <>
-      <MainHeader />
+      <Header onSearch={handleSearch} />
       <Navbar />
       {showMessageModal && (
         <div className="custom-modal">

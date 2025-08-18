@@ -1,21 +1,20 @@
-
 import React, { useState, useEffect, useRef } from "react";
 import { Link, useNavigate, useLocation } from "react-router-dom";
-import { BsCart3, BsPersonCircle, BsSearch } from "react-icons/bs";
+import { BsCart3, BsSearch, BsPersonCircle } from "react-icons/bs";
 import { useSearch } from "../AdminPanel/context/SearchContext";
-import { isAuthenticated } from '../lib/auth'
+import { isAuthenticated } from "../lib/auth";
 import "../Styles/MainHeader.css";
 
 const MainHeader = ({ onSearch }) => {
   const { searchQuery, setSearchQuery } = useSearch();
   const [dropdownOpen, setDropdownOpen] = useState(false);
+  const [showConfirmModal, setShowConfirmModal] = useState(false);
+  const [showLogoutModal, setShowLogoutModal] = useState(false);
   const dropdownRef = useRef(null);
-  const navigate = useNavigate()
-  const route = useLocation()
+  const navigate = useNavigate();
+  const route = useLocation();
 
-  const toggleDropdown = () => {
-    setDropdownOpen(!dropdownOpen);
-  };
+  const toggleDropdown = () => setDropdownOpen(!dropdownOpen);
 
   const closeDropdown = (event) => {
     if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
@@ -23,64 +22,141 @@ const MainHeader = ({ onSearch }) => {
     }
   };
 
-  const logout = () => {
-    localStorage.clear()
-    navigate('/')
-  }
+  // 👇 Instead of logging out directly, open confirmation modal
+  const handleLogoutClick = () => {
+    setShowConfirmModal(true);
+  };
+
+  // 👇 When user confirms
+  const confirmLogout = () => {
+    setShowConfirmModal(false);
+    localStorage.clear();
+    setShowLogoutModal(true); // show success modal
+    setTimeout(() => {
+      setShowLogoutModal(false);
+      navigate("/"); // redirect home
+    }, 2000);
+  };
 
   const searchResults = (event) => {
-    if (event.keyCode === 13) {
-       onSearch(route.pathname)
-    }
-  }
-
+    if (event.keyCode === 13) onSearch(route.pathname);
+  };
 
   useEffect(() => {
     document.addEventListener("mousedown", closeDropdown);
-    return () => {
-      document.removeEventListener("mousedown", closeDropdown);
-    };
+    return () => document.removeEventListener("mousedown", closeDropdown);
   }, []);
 
+  const user = isAuthenticated()
+    ? JSON.parse(localStorage.getItem("user"))
+    : null;
+  const userInitial = user ? user.name.charAt(0).toUpperCase() : "";
+
   return (
-    <header className="header">
-      <div className="header-content">
-        <Link to="/" className="logo-container">
-          <div className="brand">
-            <BsCart3 className="brand-icon" />
-            <span className="brand-name">BUYSMART</span>
-          </div>
-        </Link>
+    <>
+      <header className="header">
+        <div className="header-content">
+          <Link to="/" className="logo-container">
+            <div className="brand">
+              <BsCart3 className="brand-icon" />
+              <span className="brand-name">BUYSMART</span>
+            </div>
+          </Link>
 
-        <div className="search-container">
-          <BsSearch className="search-icon" />
-          <input
-            type="text"
-            className="search-bar"
-            placeholder="Search..."
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-            onKeyUp={searchResults}
-          />
+          <div className="search-container">
+            <BsSearch className="search-icon" />
+            <input
+              type="text"
+              className="search-bar"
+              placeholder="Search..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              onKeyUp={searchResults}
+            />
+          </div>
+
+          <div className="profile-section" ref={dropdownRef}>
+            {user ? (
+              <div className="user-badge" onClick={toggleDropdown}>
+                <div className="user-initial">{userInitial}</div>
+                <div className="profile-details">
+                  <span className="username">{user.name}</span>
+                  <span className="email">{user.email}</span>
+                </div>
+              </div>
+            ) : (
+              <div className="profile-icon" onClick={toggleDropdown}>
+                <BsPersonCircle size={30} />
+              </div>
+            )}
+
+            {dropdownOpen &&
+              (isAuthenticated() ? (
+                <div className="dropdown-menu" style={{ marginTop: "30px" }}>
+                  <Link to="/Profile" className="dropdown-item">
+                    Profile
+                  </Link>
+                  <a
+                    onClick={handleLogoutClick}
+                    className="dropdown-item"
+                    role="button"
+                  >
+                    Logout
+                  </a>
+                </div>
+              ) : (
+                <div className="dropdown-menu">
+                  <Link to="/Login" className="dropdown-item">
+                    Login
+                  </Link>
+                  <Link to="/SignUp" className="dropdown-item">
+                    Sign Up
+                  </Link>
+                </div>
+              ))}
+          </div>
         </div>
+      </header>
 
-        <div className="profile-section" ref={dropdownRef}>
-          <div className="profile-icon" onClick={toggleDropdown}>
-            <BsPersonCircle size={30} />
+      {/* ✅ Confirmation Modal */}
+      {showConfirmModal && (
+        <div className="modal-overlay">
+          <div className="modal-content">
+            <h3>Confirm Logout</h3>
+            <p>Are you sure you want to logout?</p>
+            <div className="modal-actions">
+              <button className="cancel-btn" onClick={() => setShowConfirmModal(false)}>
+                Cancel
+              </button>
+              <button className="confirm-btn" onClick={confirmLogout}>
+                Logout
+              </button>
+            </div>
           </div>
+        </div>
+      )}
 
-    {dropdownOpen && (
-      isAuthenticated() ? <div className="dropdown-menu">
-      <Link to="/Profile" className="dropdown-item">Profile</Link>
-      <a onClick={logout} className="dropdown-item" role="button"> Logout </a>
-    </div> : <div className="dropdown-menu">
-      <Link to="/Login" className="dropdown-item">Login</Link>
-      <Link to="/SignUp" className="dropdown-item">Sign Up</Link>
+      {/* ✅ Success Modal */}
+      {showLogoutModal && (
+  <div className="modal-overlay">
+    <div className="modal-content">
+      <div className="checkmark-circle">
+        <svg className="checkmark" viewBox="0 0 52 52">
+          <path
+            fill="none"
+            stroke="#4CAF50"
+            strokeWidth="5"
+            d="M14 27l7 7 17-17"
+          />
+        </svg>
+      </div>
+      <h3>Logged Out Successfully!</h3>
+      <p>Thank you for using BuySmart.</p>
     </div>
-    )}
   </div>
-</div>
-</header>
+)}
+
+    </>
   );
 };
 
