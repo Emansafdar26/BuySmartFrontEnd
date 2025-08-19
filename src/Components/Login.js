@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { Link, useNavigate, useLocation } from "react-router-dom";
 import "../Styles/Login.css";
 import { BsEyeSlash, BsEye } from "react-icons/bs";
-import { apiGet, apiPost } from '../lib/apiwrapper';
+import { apiGet, apiPost } from "../lib/apiwrapper";
 
 const Login = () => {
   const [formData, setFormData] = useState({ email: "", password: "" });
@@ -19,6 +19,9 @@ const Login = () => {
     if (!formData.email.match(/^[^\s@]+@[^\s@]+\.[^\s@]+$/)) {
       newErrors.email = "Invalid email format";
     }
+    if (!formData.password) {
+      newErrors.password = "Password is required";
+    }
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
@@ -27,16 +30,17 @@ const Login = () => {
     e.preventDefault();
     if (!validateForm()) return;
 
-    apiPost('/auth/login', formData)
+    apiPost("/auth/login", formData)
       .then((res) => {
         if (res.detail && res.detail.code === 1) {
-          localStorage.setItem('accessToken', res.detail.access_token);
+          // ✅ Save token consistently
+          localStorage.setItem("accessToken", res.detail.access_token);
 
-          // Fetch profile
-          apiGet('/auth/profile').then((resp) => {
+          // ✅ Fetch profile
+          apiGet("/auth/profile").then((resp) => {
             if (resp.detail && resp.detail.code === 1) {
               const userData = resp.detail.data;
-              localStorage.setItem('user', JSON.stringify(userData));
+              localStorage.setItem("user", JSON.stringify(userData));
 
               setPrimaryMessage("Login successful!");
               setSecondaryMessage(`Hey ${userData.name}, Welcome`);
@@ -44,15 +48,20 @@ const Login = () => {
 
               setTimeout(() => {
                 setShowSuccessModal(false);
-                const route = localStorage.getItem('route') || '/';
-                localStorage.removeItem('route');
 
-                if (res.detail.role === 'SuperAdmin' || res.detail.role === 'Admin') {
-                  navigate('/admin/dashboard');
+                // ✅ check for stored redirect (e.g. /product/:id)
+                const redirectPath = localStorage.getItem("redirectAfterLogin");
+                localStorage.removeItem("redirectAfterLogin");
+
+                if (res.detail.role === "SuperAdmin" || res.detail.role === "Admin") {
+                  navigate("/admin/dashboard");
+                } else if (redirectPath) {
+                  navigate(redirectPath);
                 } else {
+                  const route = location.state?.from || "/";
                   navigate(route);
                 }
-              }, 2500);
+              }, 2000);
             } else {
               setErrors({ password: resp.detail?.error || "Error fetching profile" });
             }
@@ -70,7 +79,9 @@ const Login = () => {
         <div className="left-panel">
           <h2>Hello, Welcome!</h2>
           <p>Don't have an account?</p>
-          <Link to="/signup" className="register-btn">Register</Link>
+          <Link to="/signup" className="register-btn">
+            Register
+          </Link>
         </div>
 
         <div className="right-panel">
@@ -81,7 +92,9 @@ const Login = () => {
               className="login-input"
               placeholder="Email"
               value={formData.email}
-              onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+              onChange={(e) =>
+                setFormData({ ...formData, email: e.target.value })
+              }
             />
             {errors.email && <p className="login-error">{errors.email}</p>}
 
@@ -91,7 +104,9 @@ const Login = () => {
                 className="login-input"
                 placeholder="Password"
                 value={formData.password}
-                onChange={(e) => setFormData({ ...formData, password: e.target.value })}
+                onChange={(e) =>
+                  setFormData({ ...formData, password: e.target.value })
+                }
               />
               <span
                 onClick={() => setShowPassword(!showPassword)}
@@ -102,11 +117,17 @@ const Login = () => {
             </div>
             {errors.password && <p className="login-error">{errors.password}</p>}
 
-            <button type="submit" className="login-button">Login</button>
+            <button type="submit" className="login-button">
+              Login
+            </button>
             <p className="login-text">
               Forgot Password? <Link to="/forgot-password">Reset</Link>
             </p>
-            <button type="button" className="back-btn" onClick={() => navigate(-1)}>
+            <button
+              type="button"
+              className="back-btn"
+              onClick={() => navigate(-1)}
+            >
               Back
             </button>
           </form>
@@ -118,7 +139,12 @@ const Login = () => {
           <div className="modal-content">
             <div className="checkmark-circle">
               <svg className="checkmark" viewBox="0 0 52 52">
-                <path fill="none" stroke="#4CAF50" strokeWidth="5" d="M14 27l7 7 17-17" />
+                <path
+                  fill="none"
+                  stroke="#4CAF50"
+                  strokeWidth="5"
+                  d="M14 27l7 7 17-17"
+                />
               </svg>
             </div>
             <h3>{primaryMessage}</h3>

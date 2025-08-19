@@ -1,10 +1,8 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
+import { useParams, useNavigate, useLocation } from 'react-router-dom';
 import { useSearch } from "../AdminPanel/context/SearchContext";
 import '../Styles/ProductDetail.css';
-import {
-  AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Legend
-} from 'recharts';
+import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Legend } from 'recharts';
 import Header from './MainHeader';
 import Navbar from './Navbar';
 import Footer from './Footer';
@@ -16,11 +14,13 @@ import dayjs from 'dayjs';
 const ProductDetail = () => {
   const { id } = useParams();
   const { searchQuery } = useSearch();
+  const navigate = useNavigate();
+  const location = useLocation();
+
   const [platforms, setPlatforms] = useState([]);
   const [filteredPlatforms, setFilteredPlatforms] = useState([]);
-  const navigate = useNavigate();
   const [isFavourite, setIsFavourite] = useState(false);
-  const [sortOption, setSortOption] = useState('');
+  const [sortOption, setSortOption] = useState('priceAsc');
   const [showSortDropdown, setShowSortDropdown] = useState(false);
   const [modalContent, setModalContent] = useState('');
   const [showModal, setShowModal] = useState(false);
@@ -31,10 +31,8 @@ const ProductDetail = () => {
 
   const dropdownRef = useRef(null);
 
-  // ✅ Image proxy helper
   const proxyImage = (url) => `http://localhost:8000/image-proxy?url=${encodeURIComponent(url)}`;
 
-  // ✅ Fetch if product is already favorited
   useEffect(() => {
     if (!id) return;
     apiGet(`/products/${id}/isfavorite`)
@@ -45,16 +43,28 @@ const ProductDetail = () => {
   }, [id]);
 
   const handleFavouriteToggle = () => {
+    const token = localStorage.getItem("accessToken");
+    if (!token) {
+      localStorage.setItem("redirectAfterLogin", `/product/${id}?fav=true`);
+      navigate("/login");
+      return;
+    }
+
     apiPost("/products/togglefavorite", { product_id: Number(id) })
       .then(res => {
-        if (res.resp?.code === 1) {
-          setIsFavourite(res.resp.status === "added");
-          setModalContent(res.resp.message);
-          setShowModal(true);
+        const status = res.resp?.status || res.detail?.status;
+        const code = res.resp?.code || res.detail?.code;
+
+        if (code === 1) {
+          if (status === "already" || status === "added") setIsFavourite(true);
+          else if (status === "removed") setIsFavourite(false);
+
+          setModalContent(res.resp?.message || res.detail?.message || "Action completed");
         } else {
-          setModalContent(res.resp?.error || "Failed to update favorite");
-          setShowModal(true);
+          setModalContent(res.resp?.error || res.detail?.error || "Failed to update favorite");
         }
+
+        setShowModal(true);
       })
       .catch(err => {
         console.error("Error toggling favorite", err);
@@ -63,20 +73,29 @@ const ProductDetail = () => {
       });
   };
 
-  // ✅ Related products fetch
+  useEffect(() => {
+    const queryParams = new URLSearchParams(location.search);
+    if (queryParams.get("fav") === "true") {
+      handleFavouriteToggle();
+      queryParams.delete("fav");
+      navigate(`/product/${id}`, { replace: true });
+    }
+  }, [id, location.search]);
+
   useEffect(() => {
     if (!id) return;
     apiGet(`/products/${id}/related`)
-      .then((res) => {
-        if (res.detail && res.detail.code === 1) {
+      .then(res => {
+        if (res.detail?.code === 1) {
           const related = res.detail.data.map(p => ({
+            id: p.id,
             name: p.platform_name || 'Unknown',
-            logo: proxyImage(p.image), // use proxy
+            logo: proxyImage(p.image),
             productName: p.name,
             price: p.price,
-            productUrl: `/product/${p.id}`,
-            platform_website: p.platform_website || '#'
+            productUrl: p.product_url || '#',
           }));
+          related.sort((a, b) => a.price - b.price);
           setPlatforms(related);
           setFilteredPlatforms(related);
         } else {
@@ -84,7 +103,7 @@ const ProductDetail = () => {
           setFilteredPlatforms([]);
         }
       })
-      .catch((err) => {
+      .catch(err => {
         console.error("Error fetching related products", err);
         setPlatforms([]);
         setFilteredPlatforms([]);
@@ -95,7 +114,6 @@ const ProductDetail = () => {
     if (path.includes("product")) navigate('/products');
   };
 
-  // ✅ Price history fetch
   useEffect(() => {
     if (!id) {
       setLoadingHistory(false);
@@ -105,8 +123,8 @@ const ProductDetail = () => {
     setLoadingHistory(true);
     setError(null);
     apiGet(`/products/${id}/price-history`)
-      .then((res) => {
-        if (res.detail && res.detail.code === 1) {
+      .then(res => {
+        if (res.detail?.code === 1) {
           const formattedData = res.detail.data.map(item => ({
             date: dayjs(item.date).format("MMM"),
             price: item.price
@@ -117,17 +135,16 @@ const ProductDetail = () => {
           setError(res.detail?.error || "Failed to fetch price history");
         }
       })
-      .catch((err) => {
+      .catch(err => {
+        console.error(err);
         setPriceHistory([]);
         setError("Error fetching price history");
-        console.error(err);
       })
       .finally(() => setLoadingHistory(false));
   }, [id]);
 
   useEffect(() => {
     if (!id) return;
-
     apiGet(`/products/${id}`)
       .then(res => {
         if (res.detail?.code === 1 && res.detail.data) {
@@ -135,9 +152,7 @@ const ProductDetail = () => {
             ...res.detail.data,
             image: proxyImage(res.detail.data.image)
           });
-        } else {
-          setProductInfo(null);
-        }
+        } else setProductInfo(null);
       })
       .catch(err => {
         console.error("Error fetching product info", err);
@@ -161,18 +176,14 @@ const ProductDetail = () => {
 
   useEffect(() => {
     const handleClickOutside = (event) => {
-      if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
-        setShowSortDropdown(false);
-      }
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target)) setShowSortDropdown(false);
     };
     document.addEventListener('mousedown', handleClickOutside);
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
 
   const productImage = productInfo?.image || '';
-  const currentPrice = priceHistory.length > 0
-    ? priceHistory[priceHistory.length - 1].price
-    : productInfo?.price || 0;
+  const currentPrice = priceHistory.length > 0 ? priceHistory[priceHistory.length - 1].price : productInfo?.price || 0;
   const currentPlatform = productInfo?.platform_name || '';
 
   return (
@@ -201,6 +212,17 @@ const ProductDetail = () => {
           <h2>{productInfo?.name || productInfo?.title || 'Product Name'}</h2>
           <p className="product-main-price">Rs {currentPrice.toLocaleString()}</p>
           <p className="product-main-platform">Platform: {currentPlatform}</p>
+
+          {productInfo?.product_url && (
+            <a
+              href={productInfo.product_url}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="visit-btn"
+            >
+              Visit
+            </a>
+          )}
         </div>
 
         <div className="chart-section">
@@ -248,7 +270,12 @@ const ProductDetail = () => {
         <div className="price-cards">
           {filteredPlatforms.length > 0 ? (
             filteredPlatforms.map((platform, index) => (
-              <div key={index} className="price-card">
+              <div
+                key={index}
+                className="price-card"
+                onClick={() => navigate(`/product/${platform.id}`)}
+                style={{ cursor: "pointer" }}
+              >
                 <img src={platform.logo} alt={platform.productName} className="comparison-product-img" />
                 <div className='product-details-parent'>
                   <div className="platform-details">
@@ -259,7 +286,13 @@ const ProductDetail = () => {
                     <span className="platform-price"> Rs {platform.price.toLocaleString()}</span>
                   </div>
                 </div>
-                <a href={platform.platform_website} target="_blank" rel="noopener noreferrer" className="visit-btn">
+                <a
+                  href={platform.productUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="visit-btn"
+                  onClick={(e) => e.stopPropagation()}
+                >
                   Visit
                 </a>
               </div>
