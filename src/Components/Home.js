@@ -2,7 +2,6 @@ import React, { useState, useEffect } from "react";
 import { useSearch } from "../AdminPanel/context/SearchContext";
 import { useNavigate, Link } from "react-router-dom";
 import Header from "./MainHeader";
-import Navbar from "./Navbar";
 import Footer from "./Footer";
 import "../Styles/Home.css";
 import { apiGet } from "../lib/apiwrapper";
@@ -21,10 +20,22 @@ const proxyImage = (url) =>
 // ====== Carousel Images ======
 const carouselImages = [
   { src: SmartTV3, caption: "Latest Smart TVs at the Best Prices" },
-  { src: Refrigrator, caption: "Best Deals on Refrigerators – Stay Cool & Save Money!" },
-  { src: WashingMachine, caption: "Top Washing Machines – Compare & Choose Smartly!" },
-  { src: Kitchen, caption: "Kitchen Essentials – From Microwaves to Blenders!" },
-  { src: category_ac, caption: "Beat the Heat with the Best ACs – Compare & Stay Cool!" },
+  {
+    src: Refrigrator,
+    caption: "Best Deals on Refrigerators – Stay Cool & Save Money!",
+  },
+  {
+    src: WashingMachine,
+    caption: "Top Washing Machines – Compare & Choose Smartly!",
+  },
+  {
+    src: Kitchen,
+    caption: "Kitchen Essentials – From Microwaves to Blenders!",
+  },
+  {
+    src: category_ac,
+    caption: "Beat the Heat with the Best ACs – Compare & Stay Cool!",
+  },
 ];
 
 // ====== Welcome Modal Slides ======
@@ -65,12 +76,15 @@ const Home = () => {
   const [errors, setErrors] = useState({});
 
   // ====== Carousel Controls ======
-  const nextSlide = () => setCurrentIndex((i) => (i + 1) % carouselImages.length);
-  const prevSlide = () => setCurrentIndex((i) => (i === 0 ? carouselImages.length - 1 : i - 1));
+  const nextSlide = () =>
+    setCurrentIndex((i) => (i + 1) % carouselImages.length);
+  const prevSlide = () =>
+    setCurrentIndex((i) => (i === 0 ? carouselImages.length - 1 : i - 1));
 
   // ====== Modal Controls ======
   const nextModal = () => setModalIndex((i) => (i + 1) % modalSlides.length);
-  const prevModal = () => setModalIndex((i) => (i === 0 ? modalSlides.length - 1 : i - 1));
+  const prevModal = () =>
+    setModalIndex((i) => (i === 0 ? modalSlides.length - 1 : i - 1));
 
   // ====== API Calls ======
   const fetchCategories = async () => {
@@ -136,7 +150,6 @@ const Home = () => {
   return (
     <>
       <Header onSearch={handleSearch} />
-      <Navbar />
 
       {/* ===== Welcome Modal ===== */}
       {showWelcome && (
@@ -148,10 +161,17 @@ const Home = () => {
           }
         >
           <div className="welcome-modal">
-            <button className="close-modal" onClick={() => setShowWelcome(false)}>
+            <button
+              className="close-modal"
+              onClick={() => setShowWelcome(false)}
+            >
               ×
             </button>
-            <img src={modalSlides[modalIndex].image} alt="feature" className="modal-image" />
+            <img
+              src={modalSlides[modalIndex].image}
+              alt="feature"
+              className="modal-image"
+            />
             <h2>{modalSlides[modalIndex].title}</h2>
             <p>{modalSlides[modalIndex].text}</p>
 
@@ -183,16 +203,28 @@ const Home = () => {
       <main className="main-content">
         {/* Carousel */}
         <section className="featured-products">
-          <div className="carousel">
-            <div className="carousel-item">
-              <img src={carouselImages[currentIndex].src} alt="Featured" />
-              <div className="carousel-caption">{carouselImages[currentIndex].caption}</div>
+          <div className="main-section">
+            <div className="main-section-welcome">
+              <h1>Welcome to BuySmart</h1>
+              <p>Lorem ipsum Lorem ipsum Lorem ipsum Lorem ipsum Lorem ipsum Lorem ipsum Lorem ipsum Lorem ipsum Lorem ipsum Lorem ipsum Lorem ipsum Lorem ipsum Lorem ipsum Lorem ipsum Lorem ipsum</p>
+              <button>Craete your account</button>
+            </div>
+            <div className="main-section-slider">
+              <div className="carousel">
+                <div className="carousel-item">
+                  <img src={carouselImages[currentIndex].src} alt="Featured" />
+                  <div className="carousel-caption">
+                    {carouselImages[currentIndex].caption}
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
-          <div className="carousel-controls">
+          <div></div>
+          {/* <div className="carousel-controls">
             <button onClick={prevSlide}>&#10094;</button>
             <button onClick={nextSlide}>&#10095;</button>
-          </div>
+          </div> */}
         </section>
 
         {/* Categories */}
@@ -200,7 +232,11 @@ const Home = () => {
           <h2>Top Categories</h2>
           <div className="categories-grid">
             {categories.map((cat) => (
-              <Link to={`/category/${cat.id}`} key={cat.id} className="category-item-link">
+              <Link
+                to={`/category/${cat.id}`}
+                key={cat.id}
+                className="category-item-link"
+              >
                 <div className="category-item">
                   <img src={proxyImage(cat.image_url)} alt={cat.name} />
                   <p>{cat.name}</p>
@@ -215,18 +251,28 @@ const Home = () => {
           <h2>Hot Deals</h2>
           <div className="deals-grid">
             {filteredTrending.map((deal) => {
-              const oldPrice = parseFloat(deal.old_price?.replace("Rs ", "")) || 0;
-              const newPrice = parseFloat(deal.current_price?.replace("Rs ", "")) || 0;
-              const discount = oldPrice ? ((oldPrice - newPrice) / oldPrice) * 100 : 0;
+              const oldPrice =
+                parseFloat(deal.old_price?.replace("Rs ", "")) || 0;
+              const newPrice =
+                parseFloat(deal.current_price?.replace("Rs ", "")) || 0;
+              const discount = oldPrice
+                ? ((oldPrice - newPrice) / oldPrice) * 100
+                : 0;
 
               return (
-                <Link to={`/product/${deal.id}`} key={deal.id} className="deal-item-link">
+                <Link
+                  to={`/product/${deal.id}`}
+                  key={deal.id}
+                  className="deal-item-link"
+                >
                   <div className="deal-item">
                     <img src={proxyImage(deal.image_url)} alt={deal.name} />
                     <p>{deal.name?.slice(0, 50)}</p>
                     <span className="new-price">{deal.current_price}</span>
                     <span className="old-price">{deal.old_price}</span>
-                    <span className="discount-badge">{discount.toFixed(0)}% OFF</span>
+                    <span className="discount-badge">
+                      {discount.toFixed(0)}% OFF
+                    </span>
                   </div>
                 </Link>
               );
@@ -239,12 +285,18 @@ const Home = () => {
           <h2>Recent Price Updates</h2>
           <div className="updates-grid">
             {filteredUpdates.map((u) => (
-              <Link to={`/product/${u.id}`} key={u.id} className="update-item-link">
+              <Link
+                to={`/product/${u.id}`}
+                key={u.id}
+                className="update-item-link"
+              >
                 <div className="update-item">
                   <img src={u.image_url} alt={u.name} />
                   <p>{u.name?.slice(0, 50)}</p>
                   <span className="price">{u.price}</span>
-                  <span className="timestamp">Updated: {u.lastUpdated.toLocaleString()}</span>
+                  <span className="timestamp">
+                    Updated: {u.lastUpdated.toLocaleString()}
+                  </span>
                 </div>
               </Link>
             ))}

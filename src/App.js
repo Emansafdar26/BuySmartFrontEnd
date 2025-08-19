@@ -26,6 +26,8 @@ import TermsAndConditions from "./Components/TermsAndConditions";
 import Contact from "./Components/Contact";
 import PrivateRoute from "./Components/PrivateRoute";
 import PublicRoute from "./Components/PublicRoute";
+import Preferences from './Components/Preferences'
+import PreferenceView from './Components/PreferenceView'
 
 
 function App() {
@@ -96,6 +98,23 @@ function App() {
               </PrivateRoute>
             }
           />
+           <Route
+            path="/preferences"
+            element={
+              <PrivateRoute>
+                <Preferences />
+              </PrivateRoute>
+            }
+          />
+            <Route
+            path="/preferenceview"
+            element={
+              <PrivateRoute>
+                <PreferenceView />
+              </PrivateRoute>
+            }
+          />
+          
           <Route
             path="/favourites/:search?"
             element={
