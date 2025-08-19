@@ -1,13 +1,4 @@
-.navbar {
-  position: fixed;
-  top: 70px;
-  width: 100%;
-  background-color: #1B1F3B;
-  padding: 12px 0;
-  box-shadow: 0 3px 6px rgba(0, 0, 0, 0.15);
-  z-index: 999;
-  height: 55px;
-}
+
 
 .nav-links {
   display: flex;
@@ -16,7 +7,6 @@
   list-style: none;
   margin: 0;
   padding: 0;
-  padding-top: 25px;
 }
 
 .nav-links li {
