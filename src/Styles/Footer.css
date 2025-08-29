@@ -6,6 +6,7 @@
   font-family: "Arial", sans-serif;
   margin-top: 60px;
   padding-top: 10px;
+  margin-bottom: 0;
 }
 
 .footer-container {
@@ -28,7 +29,7 @@
 .b-name {
   font-size: 28px;
   font-weight: bold;
-  color: #FFC107;
+  color: #1B1F3B;
   font-style: italic;
 }
 
@@ -47,7 +48,7 @@
 .footer-links h3 {
   font-size: 19px;
   margin-bottom: 14px;
-  color: #FFC107;
+  color: #1B1F3B;
 }
 
 .footer-links ul {
@@ -67,7 +68,7 @@
 }
 
 .footer-links ul li a:hover {
-  color: #c98914;
+  color: #000000;
 }
 
 .footer-contact {
@@ -79,7 +80,7 @@
 .footer-contact h3 {
   font-size: 19px;
   margin-bottom: 14px;
-  color: #FFC107;
+  color: #1B1F3B;
 }
 
 .footer-contact p {
@@ -90,7 +91,7 @@
 
 .footer-legal a {
   display: block;
-  color: #c98914;
+  color: #1B1F3B;
   text-decoration: none;
   font-size: 15px;
   margin: 6px 0;
@@ -99,6 +100,7 @@
 
 .footer-legal a:hover {
   text-decoration: underline;
+  color: #000000;
 }
 
 .footer-bottom {

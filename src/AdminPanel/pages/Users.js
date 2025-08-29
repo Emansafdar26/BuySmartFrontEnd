@@ -16,7 +16,6 @@ function Users() {
   const [errors, setErrors] = useState({});
   const [modalType, setModalType] = useState("");
 
-  // Get logged-in role
   const [loggedUser, setLoggedUser] = useState({})
 
   useEffect(() => {
@@ -79,27 +78,32 @@ function Users() {
   };
 
   const handleAddAdminSubmit = async (e) => {
-    e.preventDefault();
-    if (validateAdminForm()) {
-      const newAdmin = {
-        username: adminForm.username,
-        email: adminForm.email,
-        role: "Admin",
-      };
+  e.preventDefault();
+  if (validateAdminForm()) {
+    const newAdmin = {
+      username: adminForm.username,
+      email: adminForm.email,
+      role: "Admin",
+    };
 
-      try {
-        const data = await apiPost("/admin/add", newAdmin);
-        if (data?.detail?.code === 1) {
-          alert(`Password sent to ${adminForm.email}`);
-          fetchUsers();
-          setAdminForm({ username: "", email: "" });
-          closeModal();
-        }
-      } catch (error) {
-        console.error("Error adding admin:", error);
+    try {
+      const data = await apiPost("/admin/add", newAdmin);
+
+      if (data?.detail?.code === 1) {
+        alert(`Password sent to ${adminForm.email}`);
+        fetchUsers();
+        setAdminForm({ username: "", email: "" });
+        closeModal();
+      } else {
+        setFormErrors({ email: data?.detail?.error || "Failed to add admin" });
       }
+    } catch (error) {
+      console.error("Error adding admin:", error);
+      setFormErrors({ email: "Something went wrong. Please try again." });
     }
-  };
+  }
+};
+
 
   const validateAdminForm = () => {
     const errors = {};
@@ -125,7 +129,6 @@ function Users() {
       <MainHeader />
       <div className="users-container">
         <h2 className="users-title">Users</h2>
-
         <div className="user-actions">
           {/* Add Admin button — Super Admin only */}
           {loggedUser && loggedUser.role === "SuperAdmin" ?

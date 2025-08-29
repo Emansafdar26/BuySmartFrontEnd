@@ -1,8 +1,7 @@
 import React, { useState, useEffect } from "react";
 import MainHeader from "../../Components/MainHeader";
 import { useSearch } from "../context/SearchContext";
-import { apiGet, apiPost, apiPut } from "../../lib/apiwrapper"; // <-- added apiPut
-// Make sure you have apiPut function. If not, I can give you the code.
+import { apiGet, apiPost, apiPut } from "../../lib/apiwrapper";
 
 const Products = () => {
   const { searchQuery } = useSearch();
@@ -153,8 +152,7 @@ const Products = () => {
     <>
       <MainHeader />
       <div className="products-container">
-        <h2>Products</h2>
-
+        <h1 className="products-title">Products</h1>
         <div className="user-actions">
           <button className="add-product-btn" onClick={() => setShowAddModal(true)}>
             Add Product

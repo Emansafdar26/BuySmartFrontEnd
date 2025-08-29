@@ -5,6 +5,7 @@ import '../Styles/Favourites.css';
 import MainHeader from './MainHeader';
 import Navbar from './Navbar';
 import Footer from './Footer';
+import Carousel from './Carousel';
 import RemoveConfirmationModal from './RemoveConfirmationModal'; 
 import { BsHeart, BsHeartFill, BsBell, BsBellFill } from "react-icons/bs";
 import { apiGet, apiPost } from '../lib/apiwrapper';
@@ -20,21 +21,23 @@ const Favourites = () => {
   const [showRemoveModal, setShowRemoveModal] = useState(false);
   const { search } = useParams();
 
+  // Helper to route images through FastAPI proxy
+  const proxyImage = (url) => `http://localhost:8000/image-proxy?url=${encodeURIComponent(url)}`;
+
   // Fetch all favourites from backend once component mounts
   useEffect(() => {
-    getFavoriteProducts({})
-
+    getFavoriteProducts({});
   }, []);
 
   const getFavoriteProducts = (data) => {
-        apiPost('/products/favorites/all', data)
+    apiPost('/products/favorites/all', data)
       .then(res => {
         if (res.detail && res.detail.code === 1) {
           setFavourites(res.detail.data.map(item => ({
             favorite_id: item.favorite_id,  
             id: item.id,                  
             title: item.title,
-            image: item.image,
+            image: proxyImage(item.image),
             price: item.price,
             priceAlert: item.price_alert,
             isFavourite: true 
@@ -47,12 +50,12 @@ const Favourites = () => {
         console.error("Error fetching favourites:", err);
       });
   }
+
   const filteredFavourites = favourites.filter(product =>
     product.isFavourite && product.title.toLowerCase().includes(searchQuery.toLowerCase())
   );
   const isSearchActive = searchQuery.trim() !== "";
 
-  // Remove from favourites API (uses product_id)
   const confirmRemove = () => {
     apiPost('/products/removefavorite', { product_id: selectedProduct.id })
       .then(res => {
@@ -66,7 +69,7 @@ const Favourites = () => {
           );
           setModalMessage("Removed from favourites");
         } else {
-          setModalMessage(res.resp.error || "Failed to remove favourite");
+          setModalMessage(res.resp?.error || "Failed to remove favourite");
         }
         setShowMessageModal(true);
         setShowRemoveModal(false);
@@ -84,17 +87,16 @@ const Favourites = () => {
 
   const handleSearch = (route) => {
     if (route === '/favourites') {
-      getFavoriteProducts({ searchQuery })
+      getFavoriteProducts({ searchQuery });
     }
   }
 
-  // Set price alert API (uses favorite_id)
   const submitPriceAlert = () => {
     const price = parseInt(alertInput);
 
     if (isNaN(price) || price <= 0) {
       setShowAlertModal(false);
-      setModalMessage('Invalid value entered!');
+      setModalMessage('Invalid value!!!');
       setShowMessageModal(true);
       return;
     }
@@ -114,7 +116,7 @@ const Favourites = () => {
           );
           setModalMessage(`Price alert set at Rs ${price.toLocaleString()}`);
         } else {
-          setModalMessage(res.detail.error || "Failed to set price alert");
+          setModalMessage(res.detail?.error || "Failed to set price alert");
         }
         setAlertInput('');
         setShowAlertModal(false);
@@ -129,12 +131,12 @@ const Favourites = () => {
     <>
       <MainHeader onSearch={handleSearch} />
       <Navbar />
-
+      <Carousel/>
       {/* Message Modal */}
       {showMessageModal && (
         <div className="custom-modal">
           <div className="custom-modal-content">
-            <p>{modalMessage}</p>
+            <div>{modalMessage}</div>
             <button onClick={() => setShowMessageModal(false)} className="modal-close-btn">Close</button>
           </div>
         </div>
@@ -210,9 +212,20 @@ const Favourites = () => {
                   <button
                     className="alert-btn"
                     onClick={() => {
-                      setSelectedProduct(product);
-                      setAlertInput(product.priceAlert || '');
-                      setShowAlertModal(true);
+                      if (product.priceAlert) {
+                        setModalMessage(
+                          <>
+                            Price alert already set at Rs {product.priceAlert.toLocaleString()}. <br />
+                            To change the target price, go to{" "}
+                            <Link to="/price-alerts" className="price-alert-link">Price Alerts page</Link>.
+                          </>
+                        );
+                        setShowMessageModal(true);
+                      } else {
+                        setSelectedProduct(product);
+                        setAlertInput('');
+                        setShowAlertModal(true);
+                      }
                     }}
                   >
                     {product.priceAlert ? <BsBellFill size={18} /> : <BsBell size={18} />} Set Alert

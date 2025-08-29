@@ -1,0 +1,248 @@
+.category-page {
+  background-color: #133c5b42;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  padding-top: 40px; 
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  margin-bottom: -60px;
+  padding-bottom: 50px;
+}
+
+.category-header h2 {
+ margin-bottom: 65px;
+  color: #133c5b;
+  text-align: center;
+  font-size: 32px;
+  font-weight: bolder;
+  margin-top: 15px;
+}
+
+.breadcrumb {
+  margin-top: 20px;           
+  margin-bottom: 30px;
+  padding: 10px 20px;
+  font-size: 16px;
+  background-color: none;
+  width: fit-content;
+  margin-left: 40px;          
+}
+
+.breadcrumb a {
+  color: #1B1F3B;
+  text-decoration: none;
+  font-weight: 500;
+}
+
+.breadcrumb a:hover {
+  text-decoration: underline;
+  color: #ff9900;
+}
+
+.breadcrumb span {
+  margin: 0 6px;
+  color: #777;
+}
+
+.noo-results {
+  text-align: center;
+  font-size: 16px;
+  color: #555;
+  grid-column: span 3;
+}
+
+.category-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 50px;
+  margin-left: 50px;
+  margin-right: 50px;
+}
+
+.category-card {
+  background: linear-gradient(145deg, #ffffff, #edf2f8);
+  color: #1B1F3B;
+  padding: 20px 15px 30px 15px;
+  border-radius: 18px;
+  text-align: center;
+  transition: all 0.4s ease;
+  box-shadow: 0px 6px 18px rgba(0, 0, 0, 0.08);
+  border-left: 5px solid #ff9900;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  position: relative;
+  cursor: pointer;
+}
+
+.category-card:hover {
+  transform: translateY(-6px);
+  box-shadow: 0px 12px 25px rgba(0, 0, 0, 0.15);
+  border-left-color: #ff6600;
+}
+.category-title-link{
+  text-decoration: none;
+}
+
+.category-card img {
+  width: 100%;
+  max-width: 150px;
+  height: 120px;
+  object-fit: cover;
+  border-radius: 12px;
+  transition: transform 0.3s ease;
+}
+
+.category-card:hover img {
+  transform: scale(1.05);
+}
+
+.category-card h3 {
+  margin: 10px 0;
+  font-size: 22px;
+  font-weight: 700;
+  color: #1B1F3B;
+  text-decoration: none;
+}
+.category-badge {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  background-color: #ff9900;
+  color: white;
+  font-size: 12px;
+  font-weight: bold;
+  padding: 5px 10px;
+  border-radius: 12px;
+  box-shadow: 0px 2px 6px rgba(0,0,0,0.2);
+}
+
+.category-filter-row {
+  display: flex;
+  justify-content: flex-end; 
+  margin: 10px 20px 20px;
+  position: relative;
+  z-index: 5; 
+  margin-right: 62px;
+  margin-bottom: 50px;
+}
+.category-sort-btn {
+  background-color: #f5f5f5;
+  border: 1px solid #ddd;
+  padding: 8px 14px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  transition: background 0.2s ease;
+  width: 150px;
+}
+
+.category-sort-btn:hover {
+  background-color: #eaeaea;
+}
+
+/* Dropdown menu */
+.category-sort-dropdown {
+  position: absolute;
+  top: 100%;
+  text-align: center;
+  margin-top: 5px;
+  background: #fff;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  box-shadow: 0px 4px 12px rgba(0,0,0,0.1);
+  z-index: 10;
+  width: 150px;
+  height: 100px;
+  overflow: hidden;
+}
+
+/* Dropdown buttons */
+.category-sort-dropdown button {
+  width: 100%;
+  padding: 11px 14px;
+  margin-top: 10px;
+  text-align: left;
+  border: none;
+  background: none;
+  cursor: pointer;
+  font-size: 14px;
+  transition: background 0.2s ease;
+}
+
+.category-sort-dropdown button:hover {
+  background-color: #FF9F1C;
+}
+
+/* Sort icon rotation */
+.sort-icon {
+  transition: transform 0.3s ease;
+}
+
+.sort-icon.open {
+  transform: rotate(180deg);
+}
+
+.subcategory-list {
+  list-style: none;
+  padding: 0;
+  margin-top: 0px;
+  width: 100%;
+  padding-left: 40px;
+}
+
+.subcategory-list li {
+  margin: 6px 0;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.subcategory-list li::before {
+  font-size: 12px;
+  color: #ff9900;
+}
+
+.subcategory-list a {
+  text-decoration: none;
+  color: #1B75bb;
+  font-size: 14px;
+  font-weight: 500;
+  transition: color 0.2s ease;
+}
+
+.subcategory-list a:hover {
+  color: #ff6600;
+  text-decoration: underline;
+}
+
+.active-category {
+  border-left: 5px solid #1B75bb;
+}
+
+.active-subcategory a {
+  font-weight: bold;
+  color: #1B75bb;
+}
+
+@media (max-width: 768px) {
+  .category-grid {
+    margin-left: 20px;
+    margin-right: 20px;
+    gap: 20px;
+  }
+
+  .category-card img {
+    max-width: 120px;
+    height: 100px;
+  }
+
+  .category-header h2 {
+    font-size: 28px;
+  }
+}

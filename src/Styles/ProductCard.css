@@ -9,8 +9,23 @@
   cursor: pointer;
   border: 4px solid #ddd;
   width: 220px;
+  width: 265px;
  
   }
+
+.favourite-icon {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  cursor: pointer;
+  z-index: 2;
+  transition: transform 0.2s ease;
+}
+
+.favourite-icon:hover {
+  transform: scale(1.2);
+}
+
   .product-image {
     max-width: 100%;
     height: 170px

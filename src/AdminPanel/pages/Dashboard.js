@@ -87,30 +87,30 @@ function Dashboard() {
   }, []);
   
 
-  const cards = [
+    const cards = [
     {
       title: "CATEGORIES",
       value: stats.categories,
       icon: <BsFillGrid3X3GapFill className="card_icon" />,
-      route: "/categories",
+      route: "/admin/categories",
     },
     {
       title: "PRODUCTS",
       value: stats.products,
       icon: <BsFillArchiveFill className="card_icon" />,
-      route: "/products",
+      route: "/admin/products",
     },
     {
       title: "USERS",
       value: stats.users,
       icon: <BsPeopleFill className="card_icon" />,
-      route: "/users",
+      route: "/admin/users",
     },
     {
       title: "PLATFORMS",
       value: stats.platforms,
       icon: <BsShop className="card_icon" />,
-      route: "/platforms",
+      route: "/admin/platforms",
     },
   ];
 
@@ -125,9 +125,10 @@ function Dashboard() {
   return (
     <>
       <MainHeader />
+      <div id="admin-content">
       <main className="admin-main-container">
         <div className="admin-title">
-          <h3>DASHBOARD</h3>
+          <h1 className="categories-title" style={{marginBottom:"40px"}}>DASHBOARD</h1>
         </div>
 
         <div className="main-cards">
@@ -179,6 +180,7 @@ function Dashboard() {
           </ResponsiveContainer>
         </div>
       </main>
+      </div>
     </>
   );
 }

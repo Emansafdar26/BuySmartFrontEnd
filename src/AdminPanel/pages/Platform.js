@@ -83,7 +83,7 @@ function Platforms() {
       <MainHeader />
       <div className="categories-container">
         <h1 className="categories-title">Platforms</h1>
-        <button className="add-category-btn" style={{ marginLeft: "-1010px" }} onClick={() => setModalOpen(true)}>
+        <button className="add-category-btn" onClick={() => setModalOpen(true)}>
           Add Platform
         </button>
 
@@ -91,7 +91,7 @@ function Platforms() {
           <table className="categories-table">
             <thead>
               <tr>
-                <th>ID</th>
+                <th>Sr.</th>
                 <th>Platform Name</th>
                 <th>URL</th>
                 <th>Image Selector</th>

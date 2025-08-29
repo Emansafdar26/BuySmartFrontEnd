@@ -1,0 +1,270 @@
+.accountpage-container {
+  display: flex;
+  width: 100%;
+  min-height: 100vh;
+  backdrop-filter: blur(14px);
+  overflow: hidden;
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.08);
+   font-family: "Inter", "Segoe UI", Tahoma, sans-serif;
+   margin-bottom: -60px;
+   margin-top: 50px;
+}
+
+.accountpage-sidebar {
+  flex: 0 0 260px;
+  background: #133c5b75;
+  color: #133c5b;
+  padding: 35px 22px;
+  display: flex;
+  flex-direction: column;
+  gap: 40px;
+ min-width: 300px;
+ padding-top: 100px;
+}
+
+.accountpage-user-info {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.accountpage-user-avatar {
+  width: 60px;
+  height: 60px;
+  background: #007bff;
+  color: #fff;
+  font-size: 22px;
+  font-weight: 700;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+ 
+}
+
+.accountpage-user-details {
+  display: flex;
+  flex-direction: column;
+}
+
+.accountpage-username {
+  font-size: 18px;
+  font-weight: 650;
+  color: black;
+}
+.accountpage-email p{
+    margin-top: 50px;
+}
+.accountpage-email {
+  font-size: 15px;
+  color: black;
+  margin-top: -5px;
+}
+
+.accountpage-menu {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.accountpage-menu-item {
+  padding: 16px 18px;
+  border-radius: 10px;
+  background: #133c5b38;
+  color: #133c5b;
+  text-decoration: none;
+  font-size: 15px;
+  font-weight: 500;
+  border: none;
+  cursor: pointer;
+  margin-bottom: 15px;
+}
+
+.accountpage-menu-item:hover,
+.accountpage-menu-item.active {
+  background: #133c5b;
+  color: white;
+
+}
+
+.accountpage-logout-btn {
+  background: #dc3545;
+  font-weight: 600;
+  color: white;
+}
+
+.accountpage-logout-btn:hover {
+  background: #b02a37;
+  box-shadow: 0 6px 14px rgba(220, 53, 69, 0.35);
+}
+.accountpage-content {
+  flex: 1;
+  padding: 40px 50px;
+  display: flex;
+  flex-direction: column;
+  gap: 30px;
+  background: #133c5b42;
+  padding-left: 70px;
+}
+
+.accountpage-title {
+  font-size: 28px;
+  font-weight: 700;
+  color: #133c5b;
+  margin-bottom: 15px;
+  text-align: center;
+}
+
+.accountpage-section {
+  background: #ffffff;
+  padding: 25px 30px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.04);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.accountpage-section:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 8px 18px rgba(0, 0, 0, 0.08);
+}
+
+.accountpage-section-title {
+  font-size: 18px;
+  font-weight: 600;
+  margin-bottom: 8px;
+  color: #133c5b;
+  text-align: center;
+}
+
+.accountpage-section-text {
+  font-size: 14px;
+  color: #4b5563;
+  line-height: 1.6;
+}
+
+.accountpage-modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(15, 23, 42, 0.55);
+  backdrop-filter: blur(6px);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 2000;
+}
+
+.accountpage-modal {
+  background: #fff;
+  padding: 28px 30px;
+  border-radius: 14px;
+  width: 90%;
+  max-width: 420px;
+  box-shadow: 0 14px 34px rgba(0, 0, 0, 0.25);
+  text-align: center;
+  animation: modalFadeIn 0.3s ease;
+}
+
+.accountpage-modal-title {
+  font-size: 22px;
+  margin-bottom: 10px;
+  color: #1a1a1a;
+}
+
+.accountpage-modal-text {
+  color: #555;
+  margin-bottom: 22px;
+}
+
+.accountpage-modal-actions {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.accountpage-modal-btn {
+  flex: 1;
+  padding: 12px 0;
+  border-radius: 8px;
+  border: none;
+  cursor: pointer;
+  font-weight: 600;
+  transition: all 0.3s ease;
+}
+
+.accountpage-cancel-btn {
+  background: #e2e8f0;
+  color: #333;
+}
+
+.accountpage-cancel-btn:hover {
+  background: #cbd5e1;
+}
+
+.accountpage-confirm-btn {
+  background: #dc3545;
+  color: white;
+}
+
+.accountpage-confirm-btn:hover {
+  background: #b02a37;
+}
+
+.accountpage-notloggedin {
+  text-align: center;
+  margin: 100px auto;
+}
+
+.accountpage-notloggedin-title {
+  font-size: 22px;
+  margin-bottom: 20px;
+  color: #133c5b;
+}
+
+.accountpage-auth-links {
+  display: flex;
+  justify-content: center;
+  gap: 15px;
+}
+
+.accountpage-auth-btn {
+  padding: 10px 18px;
+  background: #007bff;
+  color: white;
+  border-radius: 8px;
+  text-decoration: none;
+  font-weight: 500;
+  transition: background 0.3s ease;
+}
+
+.accountpage-auth-btn:hover {
+  background: #0056b3;
+}
+
+/* ===== Animation ===== */
+@keyframes modalFadeIn {
+  from { opacity: 0; transform: scale(0.9); }
+  to { opacity: 1; transform: scale(1); }
+}
+
+/* ===== Responsive ===== */
+@media (max-width: 992px) {
+  .accountpage-container {
+    flex-direction: column;
+  }
+
+  .accountpage-sidebar {
+    flex: unset;
+    width: 100%;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    padding: 20px;
+  }
+
+  .accountpage-user-info {
+    gap: 10px;
+  }
+
+  .accountpage-content {
+    padding: 25px 18px;
+  }
+}

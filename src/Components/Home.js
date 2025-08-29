@@ -1,245 +1,234 @@
 import React, { useState, useEffect } from "react";
 import { useSearch } from "../AdminPanel/context/SearchContext";
+import { useNavigate, Link } from "react-router-dom";
+import { BsGraphDown, BsBell, BsHeart, BsBarChart } from "react-icons/bs";
 import Header from "./MainHeader";
-import Navbar from "./Navbar";
 import Footer from "./Footer";
+import Carousel from "./Carousel";
 import "../Styles/Home.css";
-import SmartTV3 from "../Assets/SmartTV3.jpg";
-import Refrigrator from "../Assets/Refrigrator.jpeg";
-import WashingMachine from "../Assets/WashingMachine.png";
-import Kitchen from "../Assets/Kitchen.jpg";
-import category_tv from "../Assets/category_tv.jpeg";
-import category_fridge from "../Assets/category_fridge.jpeg";
-import category_washing from "../Assets/category_washing.jpeg";
-import category_oven from "../Assets/category_oven.jpeg";
-import category_ac from "../Assets/category_ac.webp";
-import { apiGet } from '../lib/apiwrapper';
-import { Link } from "react-router-dom";
+import { apiGet } from "../lib/apiwrapper";
+import { isAuthenticated } from "../lib/auth"; 
+import Background2 from "../Assets/Background2.png";
 
-const images = [
-  { src: SmartTV3, caption: "Latest Smart TVs at the Best Prices" },
-  { src: Refrigrator, caption: "Find the Best Deals on Refrigerators – Stay Cool & Save Money!" },
-  { src: WashingMachine, caption: "Top Washing Machines at the Best Prices – Compare & Choose Smartly!" },
-  { src: Kitchen, caption: "Compare Prices on Kitchen Essentials – From Microwaves to Blenders!" },
-  { src: category_ac, caption: "Beat the Heat with the Best ACs – Compare Prices & Stay Cool!" },
-];
+const proxyImage = (url) =>
+  url ? `http://localhost:8000/image-proxy?url=${encodeURIComponent(url)}` : "";
 
 const Home = () => {
   const { searchQuery } = useSearch();
-  const [currentIndex, setCurrentIndex] = useState(0);
+  const navigate = useNavigate();
   const [categories, setCategories] = useState([]);
-  const [errors, setErrors] = useState({});
   const [trendingDeals, setTrendingDeals] = useState([]);
-  const [recentPriceUpdates, setRecentPriceUpdates] = useState([]);
-  const [sortedRecentUpdates, setSortedRecentUpdates] = useState([]);
+  const [recentUpdates, setRecentUpdates] = useState([]);
+  const [errors, setErrors] = useState({});
+  const [loggedIn, setLoggedIn] = useState(false);
 
-  const filteredTrendingDeals = trendingDeals.filter((deal) =>
-    deal.name.toLowerCase().includes(searchQuery.toLowerCase())
-  );
-
-  const filteredRecentUpdates = sortedRecentUpdates.filter((update) =>
-    update.name.toLowerCase().includes(searchQuery.toLowerCase())
-  );
-
-  const nextSlide = () => {
-    setCurrentIndex((prevIndex) => (prevIndex + 1) % images.length);
+  const fetchCategories = async () => {
+    try {
+      const res = await apiGet("/categories");
+      if (res.detail?.code === 1) setCategories(res.detail.data || []);
+    } catch {
+      setErrors((e) => ({ ...e, categories: "Failed to fetch categories." }));
+    }
   };
 
-  const prevSlide = () => {
-    setCurrentIndex((prevIndex) =>
-      prevIndex === 0 ? images.length - 1 : prevIndex - 1
-    );
+  const fetchTrendingDeals = async () => {
+    try {
+      const res = await apiGet("/trending-deals");
+      if (res.detail?.code === 1) setTrendingDeals(res.detail.data || []);
+    } catch {
+      setErrors((e) => ({ ...e, trending: "Failed to fetch trending deals." }));
+    }
   };
 
-  // Fetch categories from the API
-  const getCategories = () => {
-    apiGet('/categories')
-      .then((res) => {
-        if (res.detail) {
-          if (res.detail.code === 1) {
-            if (res.detail.data) {
-              setCategories(res.detail.data);
-            }
-          } else if (res.detail.code === 0) {
-            let newErrors = {};
-            newErrors.categories = res.detail.error;
-            setErrors(newErrors);
-          }
-        } else {
-          let newErrors = {};
-          newErrors.categories = "Unexpected response format.";
-          setErrors(newErrors);
-        }
-      })
-      .catch((err) => {
-        console.log("API error while fetching categories:", err);
-        let newErrors = {};
-        newErrors.categories = "Something went wrong while fetching categories.";
-        setErrors(newErrors);
-      });
+  const fetchRecentUpdates = async () => {
+    try {
+      const res = await apiGet("/recent-updates");
+      if (res.detail?.code === 1) {
+        const updates = res.detail.data.map((u) => ({
+          ...u,
+          image_url: proxyImage(u.image_url),
+          price: `Rs ${Number(u.price).toLocaleString()}`,
+          lastUpdated: new Date(u.last_updated),
+        }));
+        updates.sort((a, b) => b.lastUpdated - a.lastUpdated);
+        setRecentUpdates(updates);
+      }
+    } catch {
+      setErrors((e) => ({ ...e, updates: "Failed to fetch price updates." }));
+    }
   };
 
-  // Fetch trending deals from the API
-  const getTrendingDeals = () => {
-    apiGet('/trending-deals')
-      .then((res) => {
-        if (res.detail) {
-          if (res.detail.code === 1) {
-            if (res.detail.data) {
-              setTrendingDeals(res.detail.data);
-            }
-          } else if (res.detail.code === 0) {
-            let newErrors = {};
-            newErrors.trendingDeals = res.detail.error;
-            setErrors(newErrors);
-          }
-        } else {
-          let newErrors = {};
-          newErrors.trendingDeals = "Unexpected response format.";
-          setErrors(newErrors);
-        }
-      })
-      .catch((err) => {
-        console.log("API error while fetching trending deals:", err);
-        let newErrors = {};
-        newErrors.trendingDeals = "Something went wrong while fetching trending deals.";
-        setErrors(newErrors);
-      });
-  };
-
-  // Sort recent price updates
-  const sortRecentPriceUpdates = (updates) => {
-    const sortedUpdates = [...updates].sort((a, b) => new Date(b.lastUpdated) - new Date(a.lastUpdated));
-    setSortedRecentUpdates(sortedUpdates);
-  };
-
-  // Fetch recent price updates from the API
-  const getRecentPriceUpdates = () => {
-    apiGet('/recent-updates')
-      .then((res) => {
-        if (res.detail) {
-          if (res.detail.code === 1) {
-            const formattedUpdates = res.detail.data.map(update => ({
-              id: update.id,
-              name: update.name,
-              image_url: update.image_url,
-              price: `Rs ${Number(update.price).toLocaleString()}`,
-              lastUpdated: update.last_updated
-            }));
-            setRecentPriceUpdates(formattedUpdates);
-          }
-        } else {
-          let newErrors = {};
-          newErrors.recentPriceUpdates = "Unexpected response format.";
-          setErrors(newErrors);
-        }
-      })
-      .catch((err) => {
-        console.log("API error while fetching recent price updates:", err);
-        let newErrors = {};
-        newErrors.recentPriceUpdates = "Something went wrong while fetching recent price updates.";
-        setErrors(newErrors);
-      });
-  };
-
-  // On component mount, fetch categories, trending deals, and recent price updates
   useEffect(() => {
-    getCategories();
-    getTrendingDeals();
-    getRecentPriceUpdates();
-    const interval = setInterval(() => {
-      nextSlide();
-    }, 3000);
-    return () => clearInterval(interval);
+    fetchCategories();
+    fetchTrendingDeals();
+    fetchRecentUpdates();
+    setLoggedIn(isAuthenticated()); 
   }, []);
 
-  // Sort the updates whenever the recent price updates change
-  useEffect(() => {
-    if (recentPriceUpdates.length > 0) {
-      sortRecentPriceUpdates(recentPriceUpdates);
-    }
-  }, [recentPriceUpdates]);
+  const filteredTrending = trendingDeals.filter((d) =>
+    d.name?.toLowerCase().includes(searchQuery.toLowerCase())
+  );
+
+  const filteredUpdates = recentUpdates.filter((u) =>
+    u.name?.toLowerCase().includes(searchQuery.toLowerCase())
+  );
+
+  const handleSearch = (path) => {
+    if (path === "/") navigate("/products");
+  };
 
   return (
     <>
-      <Header />
-      <Navbar />
+      <Header onSearch={handleSearch} />
+      <Carousel/>
       <main className="main-content">
-        <section className="featured-products">
-          <div className="carousel">
-            <div className="carousel-item">
-              <img src={images[currentIndex].src} alt="Featured Product" />
-              <div className="carousel-caption">{images[currentIndex].caption}</div>
-            </div>
-          </div>
-          <div className="carousel-controls">
-            <button onClick={prevSlide}>&#10094;</button>
-            <button onClick={nextSlide}>&#10095;</button>
-          </div>
-        </section>
+        <section
+          className="background-section"
+          style={{ backgroundImage: `url(${Background2})` }}
+        >
+          <div className="background-content">
+  {!loggedIn ? (
+    <>
+      <h2>Save More, Shop Smarter</h2>
+      <p>
+        With BuySmart, you never miss a deal. Create your account today and
+        start tracking your favorite products!
+      </p>
+      <h4 className="tagline">Your personal price tracker at one place</h4>
+     
+      <div className="cta-buttons">
+        <Link to="/SignUp" className="background-btn">
+          Register Now
+        </Link>
+        <Link to="/products" className="background-btn secondary-btn">
+          Explore Products
+        </Link>
+      </div>
 
+    </>
+  ) : (
+    <>
+      <h2>Welcome Back to BuySmart</h2>
+      <p>
+        Track your saved products and get real-time alerts!
+      </p>
+
+      <div className="cta-buttons">
+        <Link to="/favourites" className="background-btn">
+          Go to Wishlist
+        </Link>
+        <Link to="/products" className="background-btn secondary-btn">
+          Explore Products
+        </Link>
+      </div>
+    </>
+  )}
+</div>
+</section>
+
+  <section className="feature-section">
+    <h2 className="feature-heading">Why Choose BuySmart?</h2>
+    <div className="feature-grid">
+      <div className="feature-card">
+        <span className="feature-icon"><BsGraphDown /></span>
+        <h3>Track Live Prices</h3>
+       <p>See real-time price changes to always get the best deal.</p>
+      </div>
+      <div className="feature-card">
+        <span className="feature-icon"><BsBell /></span>
+        <h3>Instant Alerts</h3>
+        <p>Get notified the moment prices drop on items you’re watching.</p>
+      </div>
+      <div className="feature-card">
+        <span className="feature-icon"><BsHeart /></span>
+        <h3>Wishlist</h3>
+        <p>Save your favorite products and track them all in one place.</p>
+      </div>
+      <div className="feature-card">
+        <span className="feature-icon"><BsBarChart /></span>
+        <h3>Compare Before You Buy</h3>
+        <p>Quickly compare prices across multiple platforms to find the best deal.</p>
+      </div>
+    </div>
+  </section>
         <section className="top-categories">
           <h2>Top Categories</h2>
           <div className="categories-grid">
-            {categories.map((cat, index) => (
-              <div className="category-item" key={index}>
-                <img src={cat.image_url} alt="Category 4" />
-                <p>{cat.name}</p>
-              </div>
+            {categories.map((cat) => (
+              <Link
+                to={`/category/${cat.id}`}
+                key={cat.id}
+                className="category-item-link"
+              >
+                <div className="category-item">
+                  <img src={proxyImage(cat.image_url)} alt={cat.name} />
+                  <p>{cat.name}</p>
+                </div>
+              </Link>
             ))}
           </div>
         </section>
 
         <section className="trending-deals">
-            <h2>Trending Deals</h2>
-            <div className="deals-grid">
-              {filteredTrendingDeals.map((deal) => {
-                const oldPrice = deal.old_price ? parseFloat(deal.old_price.replace("Rs ", "")) : 0;
-                const price = deal.current_price ? parseFloat(deal.current_price.replace("Rs ", "")) : 0;
-                const discount = oldPrice > 0 ? ((oldPrice - price) / oldPrice) * 100 : 0;
+          <h2>Hot Deals</h2>
+          <div className="deals-grid">
+            {filteredTrending.map((deal) => {
+              const oldPrice =
+                parseFloat(deal.old_price?.replace("Rs ", "")) || 0;
+              const newPrice =
+                parseFloat(deal.current_price?.replace("Rs ", "")) || 0;
+              const discount = oldPrice
+                ? ((oldPrice - newPrice) / oldPrice) * 100
+                : 0;
 
-                return (
-                  <Link
-                    to={`/product/${deal.id}`}
-                    key={deal.id}
-                    className="deal-item-link"
-                  >
-                    <div className="deal-item">
-                      <img src={deal.image_url} alt={deal.name} />
-                      <p>{deal.name}</p>
-                      <span className="new-price">{deal.current_price}</span>
-                      <span className="old-price">{deal.old_price}</span>
-                      <span className="discount-badge">
-                        {discount.toFixed(0)}% OFF
-                      </span>
-                    </div>
-                  </Link>
-                );
-              })}
-            </div>
-          </section>
+              return (
+                <Link
+                  to={`/product/${deal.id}`}
+                  key={deal.id}
+                  className="deal-item-link"
+                >
+                  <div className="deal-item">
+                    <img src={proxyImage(deal.image_url)} alt={deal.name} />
+                    <p>{deal.name?.slice(0, 50)}</p>
 
-          <section className="recent-price-updates">
-              <h2>Recent Price Updates</h2>
-              <div className="updates-grid">
-                {filteredRecentUpdates.map((update) => (
-                  <Link
-                    to={`/product/${update.id}`}
-                    key={update.id}
-                    className="update-item-link"
-                  >
-                    <div className="update-item">
-                      <img src={update.image_url} alt={update.name} />
-                      <p>{update.name}</p>
-                      <span className="price">{update.price}</span>
-                      <span className="timestamp">
-                        Updated: {new Date(update.lastUpdated).toLocaleString()}
-                      </span>
-                    </div>
-                  </Link>
-                ))}
-              </div>
-            </section>
+                    <span className="new-price">
+                      Rs {newPrice.toLocaleString()}
+                    </span>
+                    <span className="old-price">
+                      Rs {oldPrice.toLocaleString()}
+                    </span>
+
+                    <span className="discount-badge">
+                      {discount.toFixed(0)}% OFF
+                    </span>
+                  </div>
+                </Link>
+              );
+            })}
+          </div>
+        </section>
+
+        <section className="recent-price-updates">
+          <h2>Recent Price Updates</h2>
+          <div className="updates-grid">
+            {filteredUpdates.map((u) => (
+              <Link
+                to={`/product/${u.id}`}
+                key={u.id}
+                className="update-item-link"
+              >
+                <div className="update-item">
+                  <img src={u.image_url} alt={u.name} />
+                  <p>{u.name?.slice(0, 50)}</p>
+                  <span className="price">{u.price}</span>
+                  <span className="timestamp">
+                    Updated: {u.lastUpdated.toLocaleString()}
+                  </span>
+                </div>
+              </Link>
+            ))}
+          </div>
+        </section>
       </main>
       <Footer />
     </>

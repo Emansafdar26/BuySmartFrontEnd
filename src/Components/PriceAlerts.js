@@ -6,20 +6,22 @@ import { useSearch } from "../AdminPanel/context/SearchContext";
 import MainHeader from './MainHeader';
 import Navbar from './Navbar';
 import Footer from './Footer';
+import Carousel from './Carousel';
 import { Link } from 'react-router-dom';
-import { apiGet, apiPost } from '../lib/apiwrapper'; // your helper to call backend APIs
+import { apiGet, apiPost } from '../lib/apiwrapper';
 
 const PriceAlerts = () => {
   const { searchQuery } = useSearch();
   const [alerts, setAlerts] = useState([]);
-  
   const [showRemoveModal, setShowRemoveModal] = useState(false);
   const [showChangePriceModal, setShowChangePriceModal] = useState(false);
   const [showMessageModal, setShowMessageModal] = useState(false);
-  
   const [selectedAlert, setSelectedAlert] = useState(null);
   const [newTargetPrice, setNewTargetPrice] = useState('');
   const [modalMessage, setModalMessage] = useState('');
+
+  // Helper to route images through FastAPI proxy
+  const proxyImage = (url) => `http://localhost:8000/image-proxy?url=${encodeURIComponent(url)}`;
 
   // Fetch price alerts on mount
   useEffect(() => {
@@ -27,20 +29,16 @@ const PriceAlerts = () => {
       .then(res => {
         if (res.detail && res.detail.code === 1) {
           setAlerts(res.detail.data.map(item => ({
-            favorite_id: item.favorite_id, 
-            product_id: item.id, 
+            favorite_id: item.favorite_id,
+            product_id: item.id,
             id: item.id,
             title: item.title,
-            image: item.image,
+            image: proxyImage(item.image), // use proxy
             currentPrice: item.current_price,
             targetPrice: item.target_price,
           })));
         } else {
           setAlerts([]);
-          if(res.detail?.error){
-            setModalMessage(res.detail.error);
-            setShowMessageModal(true);
-          }
         }
       })
       .catch(err => {
@@ -63,14 +61,15 @@ const PriceAlerts = () => {
 
   // Confirm remove price alert API call
   const confirmRemove = () => {
-    apiPost('/products/favorites/remove-price-alert', { 
-      favorite_id: selectedAlert.product_id  })
+    apiPost('/products/favorites/remove-price-alert', {
+      favorite_id: selectedAlert.product_id
+    })
       .then(res => {
         if (res.resp && res.resp.code === 1) {
           setAlerts(prev => prev.filter(a => a.favorite_id !== selectedAlert.favorite_id));
           setModalMessage("Removed from Price Alerts");
         } else {
-          setModalMessage(res.resp.error || "Failed to remove price alert");
+          setModalMessage(res.resp?.error || "Failed to remove price alert");
         }
         setShowMessageModal(true);
         setShowRemoveModal(false);
@@ -98,8 +97,18 @@ const PriceAlerts = () => {
   // Submit new target price API call
   const submitNewTargetPrice = () => {
     const price = parseInt(newTargetPrice);
+
+    if (!selectedAlert) return;
+
+    // If user didn’t change price, just close modal (no message)
+    if (price === selectedAlert.targetPrice) {
+      setShowChangePriceModal(false);
+      setSelectedAlert(null);
+      return;
+    }
+
     if (isNaN(price) || price <= 0) {
-      setModalMessage("Invalid value entered!");
+      setModalMessage("Invalid value!!!");
       setShowMessageModal(true);
       setShowChangePriceModal(false);
       return;
@@ -118,9 +127,9 @@ const PriceAlerts = () => {
                 : item
             )
           );
-          setModalMessage(res.resp.message || `Target price updated to Rs ${price.toLocaleString()}`);
+          setModalMessage(`Target price updated to Rs ${price.toLocaleString()}`);
         } else {
-          setModalMessage(res.resp.error || "Failed to update price alert");
+          setModalMessage(res.resp?.error || "Failed to update price alert");
         }
         setShowMessageModal(true);
         setShowChangePriceModal(false);
@@ -138,6 +147,7 @@ const PriceAlerts = () => {
     <>
       <MainHeader />
       <Navbar />
+      <Carousel/>
       {showMessageModal && (
         <div className="custom-modal">
           <div className="custom-modal-content">
@@ -150,7 +160,9 @@ const PriceAlerts = () => {
       <div className="alerts-container">
         <h2 className="alerts-title">Price Alerts</h2>
 
-        {filteredAlerts.length === 0 ? (
+        {alerts.length === 0 ? (
+          <p className="empty-text">No price alerts set.</p>
+        ) : filteredAlerts.length === 0 ? (
           <p className="empty-text">No price alerts match your search.</p>
         ) : (
           <div className="favourites-grid">
@@ -158,15 +170,15 @@ const PriceAlerts = () => {
               const targetReached = alert.currentPrice <= alert.targetPrice;
               return (
                 <div key={alert.favorite_id} className="favourite-card">
-                  <span 
-                    className="heart-icon" 
+                  <span
+                    className="heart-icon"
                     onClick={() => handleBellClick(alert)}
                   >
-                    <BsBellFill color="#f1a900ff" size={22} /> 
+                    <BsBellFill color="#f1a900ff" size={22} />
                   </span>
 
                   <img src={alert.image} alt={alert.title} className="favourite-img" />
-                  <h3 className="product-title">{alert.title?.slice(0,50)}</h3>
+                  <h3 className="product-title">{alert.title?.slice(0, 50)}</h3>
                   <div className="price-details">
                     <span className="new-price">
                       Current: Rs {alert.currentPrice.toLocaleString()}

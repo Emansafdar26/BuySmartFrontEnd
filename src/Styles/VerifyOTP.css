@@ -1,0 +1,199 @@
+.otp-page {
+ width: 100%;
+  height: 100vh;
+  background: linear-gradient(to right, #d0e1ff, #c5cbe3);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: 'Poppins', sans-serif;
+}
+
+.otp-container {
+  display: flex;
+  border-radius: 15px;
+  overflow: hidden;
+  width: 60%;
+  margin-top: 70px;
+  box-shadow: 0px 15px 40px rgba(0,0,0,0.2);
+}
+
+.otp-left-panel {
+  background-color: white;
+  flex: 1;
+  padding: 50px 30px;
+  text-align: center;
+}
+
+.otp-left-panel h2 {
+    margin-bottom: 30px;
+  color: #333;
+}
+
+/* Right Panel - Welcome */
+.otp-right-panel {
+ background-color: #1b1f3bee;
+  color: white;
+  flex: 1;
+  padding: 50px 30px;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.otp-right-panel h2 {
+  font-size: 28px;
+  margin-bottom: 15px;
+}
+
+.otp-right-panel p {
+   margin-bottom: 25px;
+  color: white;
+}
+.otp-login-btn {
+  padding: 12px 30px;
+  border: 2px solid white;
+  color: white;
+  text-decoration: none;
+  font-weight: 500;
+  border-radius: 6px;
+  transition: all 0.3s ease;
+  width: 50%;
+  margin-left: 30px;
+}
+
+.otp-login-btn:hover {
+  background-color: white;
+  color: #1b1f3bee;
+}
+
+.otp-right-panel .otp-login-btn {
+  padding: 12px 30px;
+  border: 2px solid white;
+  color: white;
+  text-decoration: none;
+  font-weight: 500;
+  border-radius: 6px;
+  transition: all 0.3s ease;
+  width: 50%;
+  margin-left: 70px;
+  margin-top: 20px;
+}
+
+.otp-right-panel .otp-login-btn:hover {
+  background-color: white;
+  color: #1b1f3bee;
+}
+
+/* Form Inputs */
+.otp-input {
+  margin: 10px 0;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+  width: 84%;
+  padding: 12px 40px 12px 12px;
+  margin-bottom: 15px;
+  font-size: 14px;
+  
+}
+
+.password-container {
+  position: relative;
+}
+
+.password-container .toggle-icon {
+  position: absolute;
+  right: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  cursor: pointer;
+  font-size: 18px;
+  color: #555;
+}
+
+.error {
+  color: #d9534f;
+  font-size: 13px;
+  margin-top: -5px;
+  margin-bottom: 10px;
+  text-align: left;
+}
+
+.otp-button {
+ width: 390px;
+  padding: 12px;
+  background-color: #1b1f3bee;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: 0.3s ease;
+  margin-bottom: 15px;
+  margin-top: 20px;
+}
+
+.otp-button:hover {
+ background-color: #1b1f3bf6;
+}
+.otp-back-btn{
+  display: inline-block;
+  margin-bottom: 20px;
+  font-size: 14px;
+  text-decoration: none;
+  font-weight: 500;
+  width: 390px;
+  padding: 10px;
+  border: 1px solid #1b1f3bee;
+  color: #1b1f3bee;
+  border-radius: 6px;
+  cursor: pointer;
+  background: transparent;
+  transition: all 0.3s ease;
+}
+
+.otp-back-btn:hover{
+  background-color: #1b1f3bf6;
+  color: white;
+}
+.otp-text{
+  display: inline-block;
+  margin-bottom: 20px;
+  font-size: 14px;
+  text-decoration: none;
+  font-weight: 500;
+  width: 390px;
+  padding: 10px;
+  border: 1px solid #1b1f3bee;
+  color: #1b1f3bee;
+  border-radius: 6px;
+  cursor: pointer;
+  background: transparent;
+  transition: all 0.3s ease;
+}
+.otp-text{
+  background-color: #1b1f3bf6;
+}
+.otp-text a{
+  text-decoration: none;
+  color: white;
+}
+
+.error-message {
+  color: #d93025;
+  margin-top: 5px;
+  font-size: 14px;
+  font-weight: 500;
+}
+
+@media (max-width: 900px) {
+  .otp-container {
+    flex-direction: column;
+    width: 90%;
+  }
+
+  .otp-left-panel, .otp-right-panel {
+    padding: 30px 20px;
+  }
+}

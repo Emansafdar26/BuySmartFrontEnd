@@ -25,7 +25,7 @@ const Footer = () => {
           <h3>Contact Us</h3>
           <p>Email: buysmart@gmail.com</p>
           <div className="footer-legal">
-            <Link to="/privacy-policy">Privacy Policy</Link>
+            <Link to="/privacy">Privacy Policy</Link>
             <Link to="/terms">Terms & Conditions</Link>
           </div>
         </div>

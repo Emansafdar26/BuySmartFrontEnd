@@ -1,229 +1,166 @@
-.auth-container {
-  width: 380px;
-  padding: 25px;
-  border-radius: 10px;
-  box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.1);
+.signup-page {
+width: 100%;
+  height: 100vh;
+  background: linear-gradient(to right, #d0e1ff, #c5cbe3);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: 'Poppins', sans-serif;
+}
+
+.signup-container {
+  display: flex;
+  border-radius: 15px;
+  overflow: hidden;
+  box-shadow: 0px 15px 40px rgba(0,0,0,0.2);
+}
+
+/* Left Panel - Form */
+.signup-left-panel {
+  background-color: white;
+  flex: 1;
+  padding: 50px 30px;
   text-align: center;
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  background-color: #1B1F3B;
-  border: 6px solid #ddd;
-  border-radius: 10px;
 }
 
-.auth-container h2 {
-  margin-bottom: 20px;
+.signup-left-panel h2 {
+    margin-bottom: 30px;
+  color: #333;
+}
+
+/* Right Panel - Welcome */
+.signup-right-panel {
+ background-color: #1b1f3bee;
   color: white;
-  font-size: 22px;
-  font-weight: 600;
-}
-
-.auth-container form {
+  flex: 1;
+  padding: 50px 30px;
+  text-align: center;
   display: flex;
   flex-direction: column;
-  align-items: center;
-  width: 100%;
-  border-radius: 10px;
+  justify-content: center;
 }
 
-.auth-container input {
-  width: 100%;
-  max-width: 330px; 
-  padding: 12px;
-  margin: 10px 0;
-  border: 1px solid var(--border-color, #ced4da);
-  border-radius: 6px;
-  font-size: 16px;
-  background: var(--input-bg, #ffffff);
-  transition: all 0.3s ease;
+.signup-right-panel h2 {
+  font-size: 28px;
+  margin-bottom: 15px;
 }
-.auth-container input:focus {
-  border-color: var(--primary-color, #007bff);
-  outline: none;
-  box-shadow: 0 0 5px rgba(0, 123, 255, 0.3);
+
+.signup-right-panel p {
+   margin-bottom: 25px;
+  color: white;
+}
+
+.signup-right-panel .login-btn {
+  padding: 12px 30px;
+  border: 2px solid white;
+  color: white;
+  text-decoration: none;
+  font-weight: 500;
+  border-radius: 6px;
+  transition: all 0.3s ease;
+  width: 50%;
+  margin-left: 70px;
+  margin-top: 20px;
+}
+
+.signup-right-panel .login-btn:hover {
+  background-color: white;
+  color: #1b1f3bee;
+}
+
+/* Form Inputs */
+.signup-input {
+  margin: 10px 0;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+  width: 84%;
+  padding: 12px 40px 12px 12px;
+  margin-bottom: 15px;
+  font-size: 14px;
+  
 }
 
 .password-container {
   position: relative;
-  width: 300px;
-  max-width: 332px;
-  margin-right: 57px;
 }
 
-.password-container input {
-  width: 100%;
-  padding-right: 42px;  
-  
-}
-
-.toggle-icon {
-  position: absolute;
-  right: 12px;
+.password-container .toggle-icon {
+position: absolute;
+  right: 10px;
   top: 50%;
   transform: translateY(-50%);
   cursor: pointer;
   font-size: 18px;
-  color: var(--icon-color, #6c757d);
-  background: transparent;
-  padding: 5px;
-  transition: color 0.3s ease;
-  margin-right: -55px;
+  color: #555;
 }
 
-.toggle-icon:hover {
-  color: var(--primary-color, #007bff);
-}
 .error {
-  color: #d9534f !important;
+  color: #d9534f;
   font-size: 13px;
-  margin-top: -6px;
+  margin-top: -5px;
   margin-bottom: 10px;
   text-align: left;
-  width: 100%;
-  max-width: 330px;
 }
 
-
-.role-selection {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  margin: 15px 0;
-  gap: 15px;
-}
-
-.role-selection label {
-  font-size: 16px;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  color: white;
-}
-
-.role-selection input[type="radio"] {
-  accent-color: var(--primary-color, #007bff);
-  
-}
-
-.auth-container button {
-  width: 100%;
-  max-width: 330px;
+/* Submit Button */
+.signup-button {
+ width: 410px;
   padding: 12px;
-  background-color: var(--primary-color, #007bff);
+  background-color: #1b1f3bee;
   color: white;
   border: none;
   border-radius: 6px;
   font-size: 16px;
   font-weight: 600;
   cursor: pointer;
-  transition: all 0.3s ease;
-  margin-bottom: 5px;
+  transition: 0.3s ease;
+  margin-bottom: 15px;
+  margin-top: 20px;
 }
 
-.auth-container button:hover {
-  background-color: var(--primary-hover, #0056b3);
+.signup-button:hover {
+ background-color: #1b1f3bf6;
 }
-
-.auth-container p {
-  margin-top: 12px;
+.signup-back-btn {
+  display: inline-block;
+  margin-bottom: 20px;
   font-size: 14px;
-  color: var(--text-secondary, #6c757d);
+  text-decoration: none;
+  font-weight: 500;
+  width: 390px;
+  padding: 10px;
+  border: 1px solid #1b1f3bee;
+  color: #1b1f3bee;
+  border-radius: 6px;
+  cursor: pointer;
+  background: transparent;
+  transition: all 0.3s ease;
 }
 
-.auth-container a {
-  color: var(--primary-color, #007bff);
+.signup-back-btn:hover {
+  background-color: #1b1f3bf6;
+  color: white;
+}
+.signup-text a{
   text-decoration: none;
+}
+
+.error-message {
+  color: #d93025;
+  margin-top: 5px;
+  font-size: 14px;
   font-weight: 500;
 }
 
-.auth-container a:hover {
-  text-decoration: underline;
-}
-
-@media (max-width: 450px) {
-  .auth-container {
+/* Responsive */
+@media (max-width: 900px) {
+  .signup-container {
+    flex-direction: column;
     width: 90%;
-    padding: 20px;
   }
 
-  .auth-container input,
-  .password-container,
-  .auth-container button {
-    max-width: 100%;
+  .signup-left-panel,
+  .signup-right-panel {
+    padding: 30px 20px;
   }
 }
-
-/* Modal Styles */
-
-.modal-overlay {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: rgba(0, 0, 0, 0.5);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  z-index: 9999;
-}
-
-.modal-content {
-  background: white;
-  padding: 30px;
-  border-radius: 10px;
-  text-align: center;
-  width: 90%;
-  max-width: 400px;
-  box-shadow: 0 0 20px rgba(0, 0, 0, 0.2);
-}
-
-.checkmark-circle {
-  width: 80px;
-  height: 80px;
-  border-radius: 50%;
-  background: #e0f7e9;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  margin: 0 auto 20px auto;
-}
-
-.checkmark {
-  width: 40px;
-  height: 40px;
-}
-
-
-@keyframes stroke {
-  0% {
-    width: 0;
-    height: 0;
-    opacity: 0;
-  }
-  50% {
-    width: 60px;
-    height: 0;
-    opacity: 1;
-  }
-  100% {
-    width: 60px;
-    height: 30px;
-    opacity: 1;
-  }
-}
-
-@keyframes scaleIn {
-  from {
-    transform: scale(0.8);
-    opacity: 0;
-  }
-  to {
-    transform: scale(1);
-    opacity: 1;
-  }
-}
-
