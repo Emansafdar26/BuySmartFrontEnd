@@ -34,10 +34,7 @@ const Login = () => {
     apiPost("/auth/login", formData)
       .then((res) => {
         if (res.detail && res.detail.code === 1) {
-          // ✅ Save token consistently
           localStorage.setItem("accessToken", res.detail.access_token);
-
-          // ✅ Fetch profile
           apiGet("/auth/profile").then((resp) => {
             if (resp.detail && resp.detail.code === 1) {
               const userData = resp.detail.data;
@@ -50,7 +47,6 @@ const Login = () => {
               setTimeout(() => {
                 setShowSuccessModal(false);
 
-                // ✅ check for stored redirect (e.g. /product/:id)
                 const redirectPath = localStorage.getItem("redirectAfterLogin");
                 localStorage.removeItem("redirectAfterLogin");
 
