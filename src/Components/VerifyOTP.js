@@ -14,7 +14,6 @@ const VerifyOtp = () => {
   const [successMsg, setSuccessMsg] = useState("");
   const [loading, setLoading] = useState(false);
 
-  // ✅ Handle OTP verification
   const handleVerifyOtp = async (e) => {
     e.preventDefault();
     setError("");
@@ -38,7 +37,6 @@ const VerifyOtp = () => {
     }
   };
 
-  // ✅ Resend OTP
   const handleResendOtp = async () => {
     setError("");
     setSuccessMsg("");
@@ -72,14 +70,9 @@ const VerifyOtp = () => {
           </p>
 
           <form onSubmit={handleVerifyOtp}>
-            <input
-              type="text"
-              placeholder="Enter OTP"
-              className="signup-input"
-              value={otp}
+            <input  type="text"  placeholder="Enter OTP"  className="signup-input"  value={otp}
               onChange={(e) => setOtp(e.target.value)}
-              maxLength={6}
-              required
+              maxLength={6} required
             />
             {error && <p className="error-message">{error}</p>}
             {successMsg && <p className="success-message">{successMsg}</p>}
@@ -87,11 +80,7 @@ const VerifyOtp = () => {
               {loading ? "Verifying..." : "Verify OTP"}
             </button>
           </form>
-          <button
-            onClick={handleResendOtp}
-            className="otp-button"
-            disabled={loading}
-          >
+          <button  onClick={handleResendOtp}  className="otp-button"  disabled={loading}>
             Resend OTP
           </button>
             <Link to="/signup" className="signup-back-btn">Go back to Signup</Link>
