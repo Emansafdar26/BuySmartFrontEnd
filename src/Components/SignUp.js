@@ -21,7 +21,6 @@ const Signup = () => {
   const [error, setError] = useState(""); // <-- to show backend error message
   const [loading, setLoading] = useState(false);
 
-  // Validate Form Inputs
   const validateForm = () => {
     let newErrors = {};
 
@@ -93,7 +92,6 @@ const Signup = () => {
         <div className="signup-left-panel">
           <h2>Sign Up</h2>
           <form onSubmit={handleSubmit}>
-            {/* Name */}
             <input
               type="text"
               className="signup-input"
@@ -104,13 +102,8 @@ const Signup = () => {
               }
             />
             {errors.name && <p className="error">{errors.name}</p>}
-
-            {/* Email */}
-            <input
-              type="email"
-              className="signup-input"
-              placeholder="Enter your email"
-              value={formData.email}
+                
+            <input type="email" className="signup-input" placeholder="Enter your email" value={formData.email}
               onChange={(e) =>
                 setFormData({ ...formData, email: e.target.value })
               }
@@ -118,11 +111,7 @@ const Signup = () => {
             {errors.email && <p className="error">{errors.email}</p>}
             {error && <p className="error-message">{error}</p>}
             <div className="password-container">
-              <input
-                type={showPassword ? "text" : "password"}
-                className="signup-input"
-                placeholder="Enter password"
-                value={formData.password}
+              <input  type={showPassword ? "text" : "password"}  className="signup-input"  placeholder="Enter password"  value={formData.password}
                 onChange={(e) =>
                   setFormData({ ...formData, password: e.target.value })
                 }
@@ -137,11 +126,7 @@ const Signup = () => {
             </div>
             {errors.password && <p className="error">{errors.password}</p>}
             <div className="password-container">
-              <input
-                type={showConfirmPassword ? "text" : "password"}
-                className="signup-input"
-                placeholder="Confirm password"
-                value={formData.confirmPassword}
+              <input  type={showConfirmPassword ? "text" : "password"}  className="signup-input"  placeholder="Confirm password"  value={formData.confirmPassword}
                 onChange={(e) =>
                   setFormData({
                     ...formData,
@@ -162,11 +147,7 @@ const Signup = () => {
             {errors.confirmPassword && (
               <p className="error">{errors.confirmPassword}</p>
             )}
-            <button
-              type="submit"
-              className="signup-button"
-              disabled={loading}
-            >
+            <button  type="submit"  className="signup-button"  disabled={loading}>
               {loading ? "Signing up..." : "Sign Up"}
             </button>
 
@@ -185,7 +166,6 @@ const Signup = () => {
         </div>
       </div>
 
-      {/* Success Modal */}
       {showSuccessModal && (
         <div className="modal-overlay">
           <div className="modal-content">
